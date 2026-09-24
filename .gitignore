@@ -1,0 +1,17 @@
+# Godot import cache and local editor state
+game/.godot/
+game/*.translation
+
+# Pipeline outputs that are always regenerated
+build/
+__pycache__/
+*.pyc
+
+# Blender autosaves (the project never commits .blend files)
+*.blend
+*.blend1
+
+# OS and editor noise
+Thumbs.db
+.DS_Store
+.vscode/
