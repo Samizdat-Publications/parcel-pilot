@@ -39,7 +39,7 @@ def _wing(m, span, chord, z, y, thickness=0.16):
             m.cylinder(r, 0.03, mat, loc=(cx, y, z + thickness * 0.5 + dz), segments=14)
 
 
-@asset("plane")
+@asset("plane", icon=(-58.0, 22.0))
 def build():
     body = Mesh()
     body.loft([_section(*s) for s in COWL], ["metal", "postal_red"])

@@ -36,3 +36,14 @@ All 23 models rebuilt as final procedural art (biplane, 10 island dioramas, isle
 ![flight](003_art_pass_final_models_and_golden_hour_at_flight.png)
 ![delivery](003_art_pass_final_models_and_golden_hour_at_delivery.png)
 ![plane (Blender preview)](003_art_pass_final_models_and_golden_hour_at_preview_plane.png)
+
+## 004 Juice: synthesized audio, particles, polished UI
+
+2026-09-24 19:22, commit `7cadbd9`
+
+M3 in progress: every sound synthesized in Python (19 effects plus a music loop, checked with spectrograms), confetti and a parachute parcel on delivery, contrails, speed lines, chimney smoke, waving flags, gull flocks, a sweeping lighthouse beam, a redesigned HUD with Blender-rendered icons, a 3D title logo, and a shift report with a rank stamp. The gallery is eight islands seen from the player camera.
+
+![title](004_juice_synthesized_audio_particles_polish_title.png)
+![flight](004_juice_synthesized_audio_particles_polish_flight.png)
+![delivery](004_juice_synthesized_audio_particles_polish_delivery.png)
+![island_gallery.png](004_juice_synthesized_audio_particles_polish_island_gallery.png)

@@ -6,8 +6,11 @@ extends Drifter
 signal zapped(where: Vector3)
 signal flashed(where: Vector3)
 
+const THUNDER := preload("res://assets/audio/thunder.wav")
+
 var _bolts: Array[Node3D] = []
 var _flash: OmniLight3D
+var _thunder: AudioStreamPlayer3D
 var _next_flash := 0.0
 var _flash_left := 0.0
 
@@ -25,6 +28,14 @@ func _ready() -> void:
 	_flash.omni_range = 70.0
 	_flash.light_energy = 0.0
 	add_child(_flash)
+	_thunder = AudioStreamPlayer3D.new()
+	_thunder.stream = THUNDER
+	_thunder.bus = "SFX"
+	_thunder.unit_size = 60.0
+	_thunder.max_distance = 900.0
+	_thunder.volume_db = 6.0
+	_thunder.add_to_group("audio_players")
+	add_child(_thunder)
 	_next_flash = randf_range(1.5, 5.0)
 
 
@@ -36,6 +47,8 @@ func _process(delta: float) -> void:
 		for bolt in _bolts:
 			bolt.visible = true
 			bolt.rotation.y = randf() * TAU
+		_thunder.pitch_scale = randf_range(0.85, 1.1)
+		_thunder.play()
 		flashed.emit(global_position)
 	if _flash_left > 0.0:
 		_flash_left -= delta

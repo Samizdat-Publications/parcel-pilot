@@ -21,6 +21,8 @@ config/icon="res://icon.svg"
 Controls="*res://scripts/autoload/controls.gd"
 Save="*res://scripts/autoload/save.gd"
 Game="*res://scripts/autoload/game.gd"
+Audio="*res://scripts/autoload/audio.gd"
+Fx="*res://scripts/fx/fx.gd"
 Dev="*res://scripts/autoload/dev.gd"
 
 [display]

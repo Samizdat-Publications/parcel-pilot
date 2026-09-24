@@ -63,6 +63,9 @@ def main():
             entry["build"]()
             export.export_glb(os.path.join(args.models, name + ".glb"))
             st = export.stats()
+            if entry["icon"] is not None:
+                az, el = entry["icon"]
+                export.render_icon(os.path.join(ROOT, "game", "assets", "icons", name + ".png"), az, el)
             if entry["preview"] and not args.no_preview:
                 export.render_previews(os.path.join(args.previews, name))
             st["seconds"] = round(time.time() - t0, 2)

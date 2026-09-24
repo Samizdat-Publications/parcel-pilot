@@ -44,6 +44,19 @@ func begin_free_flight(from: Vector3) -> void:
 	_start_leg(from, -1, false)
 
 
+## Developer/scenario hook: make a specific island the next destination.
+func force_destination(island: Island, from: Vector3) -> void:
+	if current != null:
+		current.set_delivery_active(false)
+	current = island
+	current.set_delivery_active(true)
+	leg_distance = from.distance_to(current.delivery_position())
+	leg_par = DeliveryRules.par_time(leg_distance, rules)
+	leg_elapsed = 0.0
+	leg_crashes = 0
+	leg_started.emit(current, leg_distance, leg_par)
+
+
 func register_crash() -> void:
 	leg_crashes += 1
 	streak = 0
@@ -66,13 +79,16 @@ func _physics_process(delta: float) -> void:
 		leg_elapsed += delta
 
 
-func _start_leg(from: Vector3, exclude: int, nearest: bool) -> void:
+func _start_leg(from: Vector3, exclude: int, nearest: bool, retire_previous := false) -> void:
 	var positions: Array[Vector3] = []
 	for island in islands:
 		positions.append(island.delivery_position())
 	var idx := DeliveryRules.pick_destination(positions, from, exclude, rng, rules, nearest)
 	if current != null:
-		current.set_delivery_active(false)
+		if retire_previous:
+			current.retire_delivery()
+		else:
+			current.set_delivery_active(false)
 	current = islands[idx]
 	current.set_delivery_active(true)
 	leg_distance = from.distance_to(current.delivery_position())
@@ -90,4 +106,4 @@ func _on_hoop_passed(island: Island) -> void:
 	result["island"] = island
 	result["position"] = island.delivery_position()
 	delivered.emit(result)
-	_start_leg(island.delivery_position(), islands.find(island), false)
+	_start_leg(island.delivery_position(), islands.find(island), false, true)

@@ -81,4 +81,5 @@ func _run_scenario(scenario_name: String) -> void:
 	await scenario.run(self)
 	var ok := failures.is_empty()
 	print("[scenario] done: %s -> %s" % [scenario_name, "PASS" if ok else "FAIL x%d" % failures.size()])
+	await Audio.shutdown()
 	get_tree().quit(0 if ok else 1)

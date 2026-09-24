@@ -143,5 +143,31 @@ def render_previews(out_dir, res=480):
     return paths
 
 
+def render_icon(path, azimuth, elevation, res=256):
+    """A single framed view with a transparent background, for the game's UI."""
+    st = stats()
+    lo, hi = Vector(st["min"]), Vector(st["max"])
+    center = (lo + hi) * 0.5
+    radius = max((hi - lo).length * 0.5, 0.1)
+    _setup_render(res)
+    sh = bpy.context.scene.display.shading
+    sh.show_cavity = False
+    sh.show_shadows = False
+    cam_data = bpy.data.cameras.new("IconCam")
+    cam_data.lens = 70.0
+    cam = bpy.data.objects.new("IconCam", cam_data)
+    bpy.context.scene.collection.objects.link(cam)
+    bpy.context.scene.camera = cam
+    a, e = math.radians(azimuth), math.radians(elevation)
+    direction = Vector((math.sin(a) * math.cos(e), -math.cos(a) * math.cos(e), math.sin(e)))
+    cam.location = center + direction * (radius / math.sin(cam_data.angle * 0.5) * 0.92)
+    cam.rotation_euler = (-direction).to_track_quat("-Z", "Y").to_euler()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    bpy.context.scene.render.filepath = path
+    bpy.ops.render.render(write_still=True)
+    bpy.data.objects.remove(cam, do_unlink=True)
+    bpy.data.cameras.remove(cam_data)
+
+
 def export_roots():
     return scene.roots()

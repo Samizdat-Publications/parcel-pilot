@@ -96,6 +96,21 @@ def step_assets(gate):
                 time.time() - t0)
 
 
+def step_audio(gate):
+    t0 = time.time()
+    code = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "build_audio.py")], cwd=ROOT,
+                          capture_output=True, text=True).returncode
+    rep = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "audio_report.py")], cwd=ROOT,
+                         capture_output=True, text=True)
+    lines = [l for l in rep.stdout.splitlines()[1:] if l and not l.startswith("[")]
+    bad = [l for l in lines if not l.rstrip().endswith(" ok")]
+    for l in bad:
+        print("   ", l)
+    gate.record("audio", code == 0 and rep.returncode == 0 and not bad,
+                f"{len(lines)} sounds synthesized, {len(bad)} with level, DC or loop-seam problems",
+                time.time() - t0)
+
+
 def step_godot(gate, step, args, log_name, timeout, expect_zero=True):
     code, out, secs = run([godot()] + args, log_name, timeout)
     problems = scan(out)
@@ -119,6 +134,7 @@ def main():
     ap.add_argument("--milestone", default="wip")
     ap.add_argument("--skip-assets", action="store_true")
     ap.add_argument("--skip-capture", action="store_true")
+    ap.add_argument("--showcase", action="store_true", help="also capture the island gallery")
     ap.add_argument("--seed", default="7")
     args = ap.parse_args()
     os.makedirs(os.path.join(BUILD, "logs"), exist_ok=True)
@@ -126,6 +142,7 @@ def main():
 
     if not args.skip_assets:
         step_assets(gate)
+        step_audio(gate)
     step_godot(gate, "import", ["--headless", "--path", GAME, "--import"], "import.log", 600)
     step_godot(gate, "unit", ["--headless", "--path", GAME, "--scene", "res://tests/test_runner.tscn"],
                "unit.log", 300)
@@ -136,6 +153,10 @@ def main():
         step_godot(gate, "capture", ["--path", GAME, "--resolution", "1600x900", "--disable-vsync", "--",
                                      "--scenario=tour", f"--seed={args.seed}", f"--out={out_dir}"],
                    "capture.log", 400)
+        if args.showcase:
+            step_godot(gate, "showcase", ["--path", GAME, "--resolution", "1600x900", "--",
+                                          "--scenario=showcase", f"--seed={args.seed}",
+                                          f"--out={os.path.join(out_dir, 'gallery')}"], "showcase.log", 400)
         print(f"[check] screenshots in {os.path.relpath(out_dir, ROOT)}")
 
     print("[check] " + ("ALL GREEN" if gate.ok() else "FAILED"))

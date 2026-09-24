@@ -12,17 +12,19 @@ def flag_on_pole(dress, name, x, y, z, rng, height=13.0, cloth="cloth_red", leng
     dress.cylinder(0.13, height, "white", loc=(x, y, z), segments=6, radius_top=0.09)
     dress.ico(0.24, "brass", loc=(x, y, z + height + 0.15), subdiv=1)
     top = z + height - 0.25
+    # The cloth's origin sits at the top of the pole, so in the game its local +X is the
+    # distance along the flag (the wave shader scales its ripple by it).
     f = Mesh()
     rings = []
     for k in range(9):
         t = k / 8
-        px = x + 0.12 + t * length
+        px = 0.12 + t * length
         wave = math.sin(t * 5.5 + 0.4) * 0.28 * t
         droop = t * t * 0.25
-        rings.append([(px, y + wave - 0.03, top - 2.2 - droop), (px, y + wave + 0.03, top - 2.2 - droop),
-                      (px, y + wave + 0.03, top - droop), (px, y + wave - 0.03, top - droop)])
+        rings.append([(px, wave - 0.03, -2.2 - droop), (px, wave + 0.03, -2.2 - droop),
+                      (px, wave + 0.03, -droop), (px, wave - 0.03, -droop)])
     f.loft(rings, cloth)
-    return f.to_object(name)
+    return f.to_object(name, loc=(x, y, top))
 
 
 def field(m, x, y, z, rot, rng, width=9.0, length=7.0, crop="wheat"):

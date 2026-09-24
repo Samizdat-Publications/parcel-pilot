@@ -35,4 +35,5 @@ func _ready() -> void:
 			else:
 				print("  ok    ", suite.current_test)
 	print("[tests] %d passed, %d failed" % [total - failed, failed])
+	await Audio.shutdown()
 	get_tree().quit(1 if failed > 0 else 0)

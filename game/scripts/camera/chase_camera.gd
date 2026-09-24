@@ -17,6 +17,7 @@ extends Camera3D
 
 var target: MailPlane
 var trauma := 0.0
+var _fov_kick := 0.0
 
 var _noise := FastNoiseLite.new()
 var _time := 0.0
@@ -31,6 +32,11 @@ func _ready() -> void:
 
 func add_trauma(amount: float) -> void:
 	trauma = clampf(trauma + amount, 0.0, 1.0)
+
+
+## A brief widening of the view (deliveries, boost rings) that eases back.
+func kick_fov(degrees: float) -> void:
+	_fov_kick = minf(_fov_kick + degrees, 14.0)
 
 
 ## Jump straight to the resting position (after spawns and respawns).
@@ -51,7 +57,8 @@ func _process(delta: float) -> void:
 	global_position = global_position.lerp(desired, 1.0 - exp(-follow_sharpness * delta))
 	_avoid_terrain(xf.origin)
 	_look(xf, delta)
-	var fov_goal := lerpf(base_fov, boost_fov, target.speed_ratio())
+	_fov_kick = move_toward(_fov_kick, 0.0, delta * 12.0)
+	var fov_goal := lerpf(base_fov, boost_fov, target.speed_ratio()) + _fov_kick
 	fov = lerpf(fov, fov_goal, 1.0 - exp(-3.0 * delta))
 	trauma = maxf(0.0, trauma - trauma_decay * delta)
 

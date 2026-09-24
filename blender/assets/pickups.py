@@ -11,7 +11,7 @@ from lib.registry import asset
 RING_ROT = (math.pi * 0.5, 0.0, 0.0)  # torus axis Z -> Y
 
 
-@asset("parcel")
+@asset("parcel", icon=(-38.0, 28.0))
 def parcel():
     m = Mesh()
     w, d, h = 0.8, 0.7, 0.52
@@ -62,7 +62,7 @@ def boost_ring():
     m.to_object("BoostRing")
 
 
-@asset("stamp")
+@asset("stamp", icon=(18.0, 6.0))
 def stamp():
     m = Mesh()
     card = scalloped_rect(1.5, 1.85, 6, 7, 0.08)

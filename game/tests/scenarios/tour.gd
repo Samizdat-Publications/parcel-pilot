@@ -50,7 +50,7 @@ func run(dev: Node) -> void:
 	Game.resume()
 
 	Game.end_shift()
-	await dev.wait(1.5)
+	await dev.wait(3.2)
 	await dev.capture("07_results")
 
 

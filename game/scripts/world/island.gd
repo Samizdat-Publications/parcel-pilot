@@ -39,6 +39,15 @@ func _ready() -> void:
 		_add_lamp(marker as Node3D, 1.2, 7.0)
 	for marker in find_children("FX_Beacon*", "", true, false):
 		_add_lamp(marker as Node3D, 4.0, 32.0)
+		(marker as Node3D).add_child(AmbientFx.beacon())
+	for marker in find_children("FX_Smoke*", "", true, false):
+		(marker as Node3D).add_child(AmbientFx.chimney_smoke())
+	for marker in find_children("FX_Mist*", "", true, false):
+		(marker as Node3D).add_child(AmbientFx.waterfall_mist())
+	for marker in find_children("FX_Fire*", "", true, false):
+		(marker as Node3D).add_child(AmbientFx.campfire())
+	for flag in find_children("FLAG_*", "MeshInstance3D", true, false):
+		AmbientFx.wave_flag(flag as MeshInstance3D)
 
 
 func _add_lamp(marker: Node3D, energy: float, reach: float) -> void:
@@ -53,6 +62,12 @@ func _add_lamp(marker: Node3D, energy: float, reach: float) -> void:
 func set_delivery_active(active: bool) -> void:
 	if hoop != null:
 		hoop.set_active(active)
+
+
+## The parcel just arrived here: the hoop pops and fades instead of vanishing.
+func retire_delivery() -> void:
+	if hoop != null:
+		hoop.retire()
 
 
 func delivery_position() -> Vector3:

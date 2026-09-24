@@ -26,6 +26,7 @@
 [ext_resource type="Shader" path="res://shaders/sky.gdshader" id="40_sky"]
 [ext_resource type="Shader" path="res://shaders/cloud_sea.gdshader" id="41_sea"]
 [ext_resource type="Script" path="res://scripts/world/cloud_sea.gd" id="42_sea_script"]
+[ext_resource type="Script" path="res://scripts/world/flock.gd" id="43_flock"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_sky"]
 frequency = 0.012
@@ -399,3 +400,28 @@ position = Vector3(100, -20, 330)
 
 [node name="Stamp6" parent="Stamps" instance=ExtResource("33_stamp")]
 position = Vector3(45, -20, 0)
+
+[node name="Birds" type="Node3D" parent="."]
+
+[node name="FlockHub" type="Node3D" parent="Birds"]
+position = Vector3(0, 34, 0)
+script = ExtResource("43_flock")
+radius = 32.0
+speed = -0.25
+
+[node name="FlockMill" type="Node3D" parent="Birds"]
+position = Vector3(300, 38, -140)
+script = ExtResource("43_flock")
+count = 6
+
+[node name="FlockVillage" type="Node3D" parent="Birds"]
+position = Vector3(-220, 26, 250)
+script = ExtResource("43_flock")
+radius = 36.0
+
+[node name="FlockLighthouse" type="Node3D" parent="Birds"]
+position = Vector3(-320, 64, -160)
+script = ExtResource("43_flock")
+count = 5
+radius = 20.0
+speed = 0.4

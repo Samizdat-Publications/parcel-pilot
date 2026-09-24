@@ -51,6 +51,7 @@ def main():
     ap.add_argument("--shots", default="title,flight")
     ap.add_argument("--preview", action="append", default=[], help="asset contact sheet to include")
     ap.add_argument("--no-game", action="store_true")
+    ap.add_argument("--extra", action="append", default=[], help="another image file to include")
     ap.add_argument("--note", default="", help="extra text under the heading")
     args = ap.parse_args()
     os.makedirs(PROGRESS, exist_ok=True)
@@ -81,6 +82,12 @@ def main():
             dst = os.path.join(PROGRESS, f"{prefix}_preview_{name}.png")
             shutil.copyfile(src, dst)
             images.append((f"{name} (Blender preview)", dst))
+
+    for path in args.extra:
+        if os.path.exists(path):
+            dst = os.path.join(PROGRESS, f"{prefix}_{slugify(os.path.splitext(os.path.basename(path))[0])}.png")
+            shutil.copyfile(path, dst)
+            images.append((os.path.basename(path), dst))
 
     new_log = not os.path.exists(LOG)
     with open(LOG, "a", encoding="utf-8", newline="\n") as fh:
