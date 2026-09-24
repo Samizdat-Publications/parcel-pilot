@@ -102,9 +102,13 @@ def step_godot(gate, step, args, log_name, timeout, expect_zero=True):
     for p in problems[:15]:
         print("   ", p)
     summary = ""
+    perf = ""
     for line in ANSI.sub("", out).splitlines():
         if line.startswith(("[tests]", "[bot] finished", "[scenario] done")):
             summary = line.strip()
+        if line.startswith("[perf]"):
+            perf = " " + line.strip()
+    summary += perf
     ok = (code == 0 or not expect_zero) and not problems
     gate.record(step, ok, f"exit {code}, {len(problems)} log problems. {summary}", secs)
     return out
@@ -129,7 +133,7 @@ def main():
                              "--", "--scenario=bot_shift", f"--seed={args.seed}"], "bot.log", 900)
     if not args.skip_capture:
         out_dir = os.path.join(ROOT, "docs", "devlog", args.milestone)
-        step_godot(gate, "capture", ["--path", GAME, "--resolution", "1600x900", "--",
+        step_godot(gate, "capture", ["--path", GAME, "--resolution", "1600x900", "--disable-vsync", "--",
                                      "--scenario=tour", f"--seed={args.seed}", f"--out={out_dir}"],
                    "capture.log", 400)
         print(f"[check] screenshots in {os.path.relpath(out_dir, ROOT)}")

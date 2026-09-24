@@ -119,26 +119,29 @@ class Mesh:
                                         matrix=mm)
         return self.paint(self.faces_of(res["verts"]), mat)
 
-    def loft(self, rings, mats, loc=(0, 0, 0), rot=None, m=None):
+    def loft(self, rings, mats, loc=(0, 0, 0), rot=None, m=None, seg_mats=None, stripe=1):
         """Skin consecutive closed rings with an equal point count, capping both ends.
 
         `mats` is one material or a list with one entry per band (len(rings) - 1).
-        A ring may be a single point to close the shape to a tip.
+        A ring may be a single point to close the shape to a tip. `seg_mats`
+        stripes the bands along the ring instead (see lathe).
         """
         if isinstance(mats, str):
             mats = [mats] * (len(rings) - 1)
         mm = self._base(m, loc, rot)
         bm = self.bm
         vrings = [[bm.verts.new(mm @ Vector(p)) for p in ring] for ring in rings]
-        return self._skin(vrings, mats)
+        return self._skin(vrings, mats, seg_mats, stripe)
 
     def lathe(self, profile, segments, mats, loc=(0, 0, 0), rot=None, phase=0.0,
-              jitter=0.0, rng=None, m=None):
+              jitter=0.0, rng=None, m=None, seg_mats=None, stripe=1):
         """Surface of revolution around local Z.
 
         `profile` is [(radius, z), ...] from bottom to top. A radius of 0 at
         either end collapses to a point (a tip), otherwise that end is capped.
         `jitter` (meters) nudges ring vertices for an organic, hand-cut look.
+        `seg_mats` paints vertical stripes instead: segment i gets
+        seg_mats[(i // stripe) % len(seg_mats)] (caps keep `mats`).
         """
         if isinstance(mats, str):
             mats = [mats] * (len(profile) - 1)
@@ -158,9 +161,9 @@ class Mesh:
                                  rng.uniform(-jitter, jitter) * 0.5))
                 ring.append(bm.verts.new(mm @ p))
             vrings.append(ring)
-        return self._skin(vrings, mats)
+        return self._skin(vrings, mats, seg_mats, stripe)
 
-    def _skin(self, vrings, mats):
+    def _skin(self, vrings, mats, seg_mats=None, stripe=1):
         bm = self.bm
         faces = []
         for band in range(len(vrings) - 1):
@@ -176,7 +179,11 @@ class Mesh:
                 n = len(a)
                 band_faces = [bm.faces.new((a[i], a[(i + 1) % n], b[(i + 1) % n], b[i]))
                               for i in range(n)]
-            self.paint(band_faces, mats[band])
+            if seg_mats:
+                for i, f in enumerate(band_faces):
+                    self.paint([f], seg_mats[(i // stripe) % len(seg_mats)])
+            else:
+                self.paint(band_faces, mats[band])
             faces += band_faces
         if len(vrings[0]) > 2:
             faces += self.paint([bm.faces.new(list(reversed(vrings[0])))], mats[0])
@@ -202,8 +209,9 @@ class Mesh:
         return sides + [f_top, f_bot]
 
     def torus(self, major, minor, mat, loc=(0, 0, 0), rot=None, major_seg=24, minor_seg=8,
-              m=None):
-        """Torus lying in the local XY plane (its axis is local Z)."""
+              m=None, seg_mats=None, stripe=1):
+        """Torus lying in the local XY plane (its axis is local Z). `seg_mats`
+        stripes it around the ring: segment i gets seg_mats[(i // stripe) % n]."""
         mm = self._base(m, loc, rot)
         rings = []
         for i in range(major_seg):
@@ -219,10 +227,13 @@ class Mesh:
         faces = []
         for i in range(major_seg):
             a, b = rings[i], rings[(i + 1) % major_seg]
+            seg = []
             for j in range(minor_seg):
                 k = (j + 1) % minor_seg
-                faces.append(self.bm.faces.new((a[j], b[j], b[k], a[k])))
-        return self.paint(faces, mat)
+                seg.append(self.bm.faces.new((a[j], b[j], b[k], a[k])))
+            self.paint(seg, seg_mats[(i // stripe) % len(seg_mats)] if seg_mats else mat)
+            faces += seg
+        return faces
 
     def gable_roof(self, width, depth, height, mat, loc=(0, 0, 0), rot=None, overhang=0.3,
                    thickness=0.2, gable_mat=None, m=None):
@@ -248,6 +259,81 @@ class Mesh:
         faces += self.prism(tri, -depth * 0.5, depth * 0.5, gable_mat or mat,
                             rot=(math.pi * 0.5, 0.0, 0.0), m=mm)
         return faces
+
+    def tube(self, points, radius, mat, segments=6, taper=1.0, m=None, radii=None):
+        """A closed tube through a polyline (roots, ropes, stems, railings, wires).
+
+        Radius shrinks linearly to radius * taper at the end, unless `radii`
+        gives one radius per point. A radius of 0 makes a pointed end.
+        """
+        mm = m if m is not None else IDENTITY
+        pts = [Vector(p) for p in points]
+        n = len(pts)
+        rings = []
+        for i, p in enumerate(pts):
+            if i == 0:
+                t = pts[1] - pts[0]
+            elif i == n - 1:
+                t = pts[-1] - pts[-2]
+            else:
+                t = (pts[i + 1] - pts[i - 1])
+            t = t.normalized() if t.length > 1e-9 else Vector((0, 0, 1))
+            ref = Vector((0, 0, 1)) if abs(t.z) < 0.95 else Vector((1, 0, 0))
+            u = t.cross(ref).normalized()
+            v = t.cross(u).normalized()
+            if radii is not None:
+                r = radii[i]
+            else:
+                r = radius * (1.0 + (taper - 1.0) * (i / max(n - 1, 1)))
+            if r <= 1e-6:
+                rings.append([mm @ p])
+                continue
+            ring = []
+            for k in range(segments):
+                a = 2.0 * math.pi * k / segments
+                ring.append(mm @ (p + (u * math.cos(a) + v * math.sin(a)) * r))
+            rings.append(ring)
+        vrings = [[self.bm.verts.new(p) for p in ring] for ring in rings]
+        return self._skin(vrings, [mat] * (len(vrings) - 1))
+
+    def beam(self, p0, p1, width, mat, height=None, m=None):
+        """A box from point p0 to point p1 (struts, planks, rafters)."""
+        mm = m if m is not None else IDENTITY
+        a, b = Vector(p0), Vector(p1)
+        d = b - a
+        length = d.length
+        if length < 1e-6:
+            return []
+        rot = d.normalized().to_track_quat("Z", "Y").to_matrix().to_4x4()
+        return self.box((width, height if height is not None else width, length), mat,
+                        m=mm @ Matrix.Translation((a + b) * 0.5) @ rot)
+
+    def rod(self, p0, p1, radius, mat, segments=6, m=None, radius_end=None):
+        """A cylinder from point p0 to point p1."""
+        mm = m if m is not None else IDENTITY
+        a, b = Vector(p0), Vector(p1)
+        d = b - a
+        if d.length < 1e-6:
+            return []
+        rot = d.normalized().to_track_quat("Z", "Y").to_matrix().to_4x4()
+        return self.cylinder(radius, d.length, mat, segments=segments, radius_top=radius_end,
+                             base=True, m=mm @ Matrix.Translation(a) @ rot)
+
+    def paint_up(self, faces, mat, threshold=0.55):
+        """Repaint faces that point up (grass on rock). Faces must form closed shells."""
+        bmesh.ops.recalc_face_normals(self.bm, faces=faces)
+        up = []
+        for f in faces:
+            f.normal_update()
+            if f.normal.z > threshold:
+                up.append(f)
+        return self.paint(up, mat)
+
+    def speckle(self, faces, mat, chance, rng):
+        """Repaint a random fraction of faces (grass variation, weathered stone)."""
+        picked = [f for f in faces if rng.random() < chance]
+        self.paint(picked, mat)
+        return picked
 
     # ------------------------------------------------------------ deformers
     def jitter(self, faces_or_verts, amount, rng, z_scale=1.0):
@@ -288,6 +374,41 @@ class Mesh:
         if parent is not None:
             obj.parent = parent
         return obj
+
+
+def rounded_rect(w, h, r, corner_segments=3):
+    """Counter-clockwise outline of a w x h rectangle with rounded corners."""
+    r = min(r, w * 0.5, h * 0.5)
+    pts = []
+    corners = ((w * 0.5 - r, h * 0.5 - r, 0.0), (-w * 0.5 + r, h * 0.5 - r, 0.5 * math.pi),
+               (-w * 0.5 + r, -h * 0.5 + r, math.pi), (w * 0.5 - r, -h * 0.5 + r, 1.5 * math.pi))
+    for (cx, cy, start) in corners:
+        for k in range(corner_segments + 1):
+            a = start + 0.5 * math.pi * k / corner_segments
+            pts.append((cx + math.cos(a) * r, cy + math.sin(a) * r))
+    return pts
+
+
+def scalloped_rect(w, h, teeth_x, teeth_y, depth):
+    """Counter-clockwise rectangle outline with a perforated (postage stamp) edge."""
+    pts = []
+
+    def edge(p0, p1, teeth, inward):
+        for k in range(teeth * 2):
+            t = k / (teeth * 2)
+            x = p0[0] + (p1[0] - p0[0]) * t
+            y = p0[1] + (p1[1] - p0[1]) * t
+            if k % 2 == 1:
+                x += inward[0] * depth
+                y += inward[1] * depth
+            pts.append((x, y))
+
+    hw, hh = w * 0.5, h * 0.5
+    edge((hw, -hh), (hw, hh), teeth_y, (-1, 0))
+    edge((hw, hh), (-hw, hh), teeth_x, (0, -1))
+    edge((-hw, hh), (-hw, -hh), teeth_y, (1, 0))
+    edge((-hw, -hh), (hw, -hh), teeth_x, (0, 1))
+    return pts
 
 
 def fbm(p, seed=0, octaves=3, lacunarity=2.0, gain=0.5):

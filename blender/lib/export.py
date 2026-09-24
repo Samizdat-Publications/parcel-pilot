@@ -8,9 +8,13 @@ from mathutils import Vector
 
 from . import scene
 
-# Four views: (azimuth, elevation) in degrees. The last one looks from below
-# because floating islands are mostly seen from underneath.
-PREVIEW_VIEWS = [(-35.0, 22.0), (145.0, 18.0), (45.0, 58.0), (-20.0, -24.0)]
+# Four views: (framing, azimuth, elevation) in degrees. "full" frames the whole
+# asset, "top" frames the upper surface only (island dressing close-up). The last
+# view looks from below because floating islands are mostly seen from underneath.
+PREVIEW_VIEWS = [("full", -35.0, 22.0), ("full", 145.0, 18.0), ("top", 30.0, 42.0),
+                 ("full", -20.0, -24.0)]
+
+COLLISION_ONLY = ("-colonly", "-convcolonly")
 
 
 def export_glb(path):
@@ -46,7 +50,7 @@ def stats():
     mats = set()
     meshes = 0
     for ob in bpy.context.scene.objects:
-        if ob.type != "MESH":
+        if ob.type != "MESH" or ob.name.endswith(COLLISION_ONLY):
             continue
         meshes += 1
         ev = ob.evaluated_get(depsgraph)
@@ -113,13 +117,21 @@ def render_previews(out_dir, res=480):
     bpy.context.scene.collection.objects.link(cam)
     bpy.context.scene.camera = cam
     half_fov = cam_data.angle * 0.5
-    dist = radius / math.sin(half_fov) * 1.08
+    dist = radius / math.sin(half_fov) * 1.0
+    # Collision proxies are invisible in the game, so hide them here too.
+    for ob in bpy.context.scene.objects:
+        if ob.name.endswith(COLLISION_ONLY):
+            ob.hide_render = True
+    top_center = Vector((center.x, center.y, max(hi.z * 0.35, lo.z)))
+    top_radius = max(max(hi.x - lo.x, hi.y - lo.y) * 0.36, 0.25)
+    top_dist = top_radius / math.sin(half_fov)
 
     paths = []
-    for i, (az, el) in enumerate(PREVIEW_VIEWS):
+    for i, (framing, az, el) in enumerate(PREVIEW_VIEWS):
         a, e = math.radians(az), math.radians(el)
         direction = Vector((math.sin(a) * math.cos(e), -math.cos(a) * math.cos(e), math.sin(e)))
-        cam.location = center + direction * dist
+        is_top = framing == "top" and (hi.z - lo.z) > 12.0
+        cam.location = (top_center + direction * top_dist) if is_top else (center + direction * dist)
         cam.rotation_euler = (-direction).to_track_quat("-Z", "Y").to_euler()
         path = os.path.join(out_dir, f"view_{i}.png")
         bpy.context.scene.render.filepath = path

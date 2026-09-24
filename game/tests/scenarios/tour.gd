@@ -25,6 +25,7 @@ func run(dev: Node) -> void:
 
 	await dev.wait(7.0)
 	await dev.capture("03_flight")
+	await _measure_performance(dev)
 
 	var start := Game.deliveries
 	var waited := 0.0
@@ -51,3 +52,17 @@ func run(dev: Node) -> void:
 	Game.end_shift()
 	await dev.wait(1.5)
 	await dev.capture("07_results")
+
+
+## Average frame rate over two seconds of flight, plus the renderer's load that frame.
+func _measure_performance(dev: Node) -> void:
+	var frames := 0
+	var start := Time.get_ticks_usec()
+	while Time.get_ticks_usec() - start < 2000000:
+		await dev.get_tree().process_frame
+		frames += 1
+	var fps := frames / ((Time.get_ticks_usec() - start) / 1000000.0)
+	var draws := Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+	var prims := Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)
+	print("[perf] fps=%.0f draw_calls=%d primitives=%d" % [fps, draws, prims])
+	dev.check(fps >= 60.0, "frame rate at least 60 fps (%.0f)" % fps)

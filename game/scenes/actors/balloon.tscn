@@ -7,7 +7,7 @@
 radius = 7.2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_basket"]
-size = Vector3(2.6, 2, 2.6)
+size = Vector3(2.9, 1.6, 2.9)
 
 [node name="Balloon" type="Node3D"]
 script = ExtResource("1_drift")
@@ -25,5 +25,5 @@ position = Vector3(0, 14, 0)
 shape = SubResource("SphereShape3D_envelope")
 
 [node name="Basket" type="CollisionShape3D" parent="Body"]
-position = Vector3(0, 3, 0)
+position = Vector3(0, 0.8, 0)
 shape = SubResource("BoxShape3D_basket")

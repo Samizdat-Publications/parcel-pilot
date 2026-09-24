@@ -35,6 +35,19 @@ func _ready() -> void:
 		spinner.target = part as Node3D
 		spinner.speed = Spinner.speed_for(part.name)
 		add_child(spinner)
+	for marker in find_children("FX_Light*", "", true, false):
+		_add_lamp(marker as Node3D, 1.2, 7.0)
+	for marker in find_children("FX_Beacon*", "", true, false):
+		_add_lamp(marker as Node3D, 4.0, 32.0)
+
+
+func _add_lamp(marker: Node3D, energy: float, reach: float) -> void:
+	var light := OmniLight3D.new()
+	light.light_color = Color(1.0, 0.76, 0.46)
+	light.light_energy = energy
+	light.omni_range = reach
+	light.shadow_enabled = false
+	marker.add_child(light)
 
 
 func set_delivery_active(active: bool) -> void:

@@ -3,7 +3,7 @@ extends Node
 ## Spins a SPIN_* part from a Blender model around its local forward axis
 ## (Blender +Y, Godot -Z).
 
-const SPEEDS := {"Sails": 0.9, "Propeller": 30.0, "Fan": 4.0, "Beacon": 1.2, "Vane": 0.4}
+const SPEEDS := {"Sails": 0.9, "Propeller": 30.0, "Fan": 4.0, "Beacon": 1.2, "Vane": 0.4, "Orrery": 0.6}
 
 var target: Node3D
 var speed := 1.0

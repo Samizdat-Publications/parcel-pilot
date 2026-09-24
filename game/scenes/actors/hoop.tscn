@@ -2,21 +2,20 @@
 
 [ext_resource type="Script" path="res://scripts/world/hoop.gd" id="1_hoop"]
 [ext_resource type="PackedScene" path="res://assets/models/hoop.glb" id="2_model"]
+[ext_resource type="Shader" path="res://shaders/beam.gdshader" id="3_beam"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_gate"]
 height = 3.0
 radius = 5.4
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_beam"]
-transparency = 1
-cull_mode = 2
-shading_mode = 0
-albedo_color = Color(1, 0.8, 0.4, 0.3)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_beam"]
+render_priority = 0
+shader = ExtResource("3_beam")
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_beam"]
-material = SubResource("StandardMaterial3D_beam")
-top_radius = 1.4
-bottom_radius = 1.4
+material = SubResource("ShaderMaterial_beam")
+top_radius = 2.2
+bottom_radius = 2.2
 height = 600.0
 radial_segments = 12
 rings = 1

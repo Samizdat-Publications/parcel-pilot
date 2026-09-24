@@ -92,6 +92,9 @@ PALETTE = {
     "gold":         ("#FFC93D", 0.25, 0.9, 0.6, ""),
     "boost":        ("#5FE0F0", 0.30, 0.0, 2.5, ""),
     "beacon":       ("#FFB547", 0.30, 0.0, 3.0, ""),
+    "bolt":         ("#FFF4B8", 0.20, 0.0, 8.0, ""),
+    "nav_red":      ("#FF4A3D", 0.30, 0.0, 3.0, ""),
+    "nav_green":    ("#46D86A", 0.30, 0.0, 3.0, ""),
     # Greybox blockout colors (milestone 1 only)
     "grey_light":   ("#D8D8D8", 0.90, 0.0, 0.0, ""),
     "grey_mid":     ("#A8A8A8", 0.90, 0.0, 0.0, ""),
