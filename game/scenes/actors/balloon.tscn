@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/drifter.gd" id="1_drift"]
+[ext_resource type="PackedScene" path="res://assets/models/balloon.glb" id="2_model"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_envelope"]
+radius = 7.2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_basket"]
+size = Vector3(2.6, 2, 2.6)
+
+[node name="Balloon" type="Node3D"]
+script = ExtResource("1_drift")
+orbit_radius = 40.0
+orbit_speed = 0.02
+bob_height = 2.5
+bob_speed = 0.25
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+
+[node name="Body" type="StaticBody3D" parent="."]
+
+[node name="Envelope" type="CollisionShape3D" parent="Body"]
+position = Vector3(0, 14, 0)
+shape = SubResource("SphereShape3D_envelope")
+
+[node name="Basket" type="CollisionShape3D" parent="Body"]
+position = Vector3(0, 3, 0)
+shape = SubResource("BoxShape3D_basket")

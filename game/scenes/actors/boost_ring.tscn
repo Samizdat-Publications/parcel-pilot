@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/boost_ring.gd" id="1_ring"]
+[ext_resource type="PackedScene" path="res://assets/models/boost_ring.glb" id="2_model"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_gate"]
+height = 3.0
+radius = 4.2
+
+[node name="BoostRing" type="Area3D" groups=["boost_rings"]]
+collision_layer = 4
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_ring")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+
+[node name="Gate" type="CollisionShape3D" parent="."]
+rotation = Vector3(1.5707964, 0, 0)
+shape = SubResource("CylinderShape3D_gate")

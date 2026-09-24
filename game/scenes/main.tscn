@@ -1,3 +1,40 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/world/world.tscn" id="2_world"]
+[ext_resource type="PackedScene" path="res://scenes/actors/plane.tscn" id="3_plane"]
+[ext_resource type="Script" path="res://scripts/camera/chase_camera.gd" id="4_camera"]
+[ext_resource type="Script" path="res://scripts/world/delivery_director.gd" id="5_director"]
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="6_hud"]
+[ext_resource type="Script" path="res://scripts/ui/title_screen.gd" id="7_title"]
+[ext_resource type="Script" path="res://scripts/ui/results_screen.gd" id="8_results"]
+[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="9_pause"]
+
 [node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="World" parent="." instance=ExtResource("2_world")]
+
+[node name="Plane" parent="." instance=ExtResource("3_plane")]
+position = Vector3(0, 30, 95)
+
+[node name="ChaseCamera" type="Camera3D" parent="."]
+current = true
+near = 0.2
+far = 6000.0
+script = ExtResource("4_camera")
+
+[node name="Director" type="Node" parent="."]
+script = ExtResource("5_director")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("6_hud")
+
+[node name="Title" type="CanvasLayer" parent="."]
+script = ExtResource("7_title")
+
+[node name="Results" type="CanvasLayer" parent="."]
+script = ExtResource("8_results")
+
+[node name="Pause" type="CanvasLayer" parent="."]
+script = ExtResource("9_pause")

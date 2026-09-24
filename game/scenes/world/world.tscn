@@ -1,0 +1,336 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/world.gd" id="1_world"]
+[ext_resource type="Script" path="res://scripts/world/island.gd" id="2_island"]
+[ext_resource type="Script" path="res://scripts/world/drifter.gd" id="3_drifter"]
+[ext_resource type="PackedScene" path="res://assets/models/island_post_office.glb" id="10_post"]
+[ext_resource type="PackedScene" path="res://assets/models/island_windmill.glb" id="11_mill"]
+[ext_resource type="PackedScene" path="res://assets/models/island_lighthouse.glb" id="12_light"]
+[ext_resource type="PackedScene" path="res://assets/models/island_village.glb" id="13_village"]
+[ext_resource type="PackedScene" path="res://assets/models/island_orchard.glb" id="14_orchard"]
+[ext_resource type="PackedScene" path="res://assets/models/island_forest.glb" id="15_forest"]
+[ext_resource type="PackedScene" path="res://assets/models/island_farm.glb" id="16_farm"]
+[ext_resource type="PackedScene" path="res://assets/models/island_chapel.glb" id="17_chapel"]
+[ext_resource type="PackedScene" path="res://assets/models/island_observatory.glb" id="18_obs"]
+[ext_resource type="PackedScene" path="res://assets/models/island_arch.glb" id="19_arch"]
+[ext_resource type="PackedScene" path="res://assets/models/islet_a.glb" id="20_islet_a"]
+[ext_resource type="PackedScene" path="res://assets/models/islet_b.glb" id="21_islet_b"]
+[ext_resource type="PackedScene" path="res://assets/models/islet_c.glb" id="22_islet_c"]
+[ext_resource type="PackedScene" path="res://assets/models/cloud_a.glb" id="23_cloud_a"]
+[ext_resource type="PackedScene" path="res://assets/models/cloud_b.glb" id="24_cloud_b"]
+[ext_resource type="PackedScene" path="res://assets/models/cloud_c.glb" id="25_cloud_c"]
+[ext_resource type="PackedScene" path="res://scenes/actors/storm_cloud.tscn" id="30_storm"]
+[ext_resource type="PackedScene" path="res://scenes/actors/balloon.tscn" id="31_balloon"]
+[ext_resource type="PackedScene" path="res://scenes/actors/boost_ring.tscn" id="32_ring"]
+[ext_resource type="PackedScene" path="res://scenes/actors/stamp.tscn" id="33_stamp"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
+sky_top_color = Color(0.36, 0.53, 0.84, 1)
+sky_horizon_color = Color(0.93, 0.8, 0.72, 1)
+ground_bottom_color = Color(0.62, 0.58, 0.7, 1)
+ground_horizon_color = Color(0.93, 0.8, 0.72, 1)
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 3
+tonemap_mode = 3
+fog_enabled = true
+fog_light_color = Color(0.88, 0.8, 0.8, 1)
+fog_density = 0.0011
+fog_aerial_perspective = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sea"]
+albedo_color = Color(0.96, 0.92, 0.96, 1)
+roughness = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_sea"]
+material = SubResource("StandardMaterial3D_sea")
+size = Vector2(8000, 8000)
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_world")
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.5, 2.4, 0)
+light_color = Color(1, 0.9, 0.78, 1)
+light_energy = 1.2
+shadow_enabled = true
+directional_shadow_max_distance = 450.0
+
+[node name="CloudSea" type="MeshInstance3D" parent="."]
+position = Vector3(0, -70, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_sea")
+
+[node name="Islands" type="Node3D" parent="."]
+
+[node name="PostOffice" parent="Islands" instance=ExtResource("10_post")]
+script = ExtResource("2_island")
+island_id = "post_office"
+display_name = "Post Office Peak"
+
+[node name="MossyMill" parent="Islands" instance=ExtResource("11_mill")]
+position = Vector3(300, 10, -140)
+rotation = Vector3(0, 0.6, 0)
+script = ExtResource("2_island")
+island_id = "mossy_mill"
+display_name = "Mossy Mill"
+
+[node name="BeaconPoint" parent="Islands" instance=ExtResource("12_light")]
+position = Vector3(-320, 30, -160)
+rotation = Vector3(0, 1.2, 0)
+script = ExtResource("2_island")
+island_id = "beacon_point"
+display_name = "Beacon Point"
+
+[node name="KettleHollow" parent="Islands" instance=ExtResource("13_village")]
+position = Vector3(-220, -12, 250)
+rotation = Vector3(0, 2, 0)
+script = ExtResource("2_island")
+island_id = "kettle_hollow"
+display_name = "Kettle Hollow"
+
+[node name="OrchardRest" parent="Islands" instance=ExtResource("14_orchard")]
+position = Vector3(210, -4, 280)
+rotation = Vector3(0, -0.8, 0)
+script = ExtResource("2_island")
+island_id = "orchard_rest"
+display_name = "Orchard Rest"
+
+[node name="Pinewhistle" parent="Islands" instance=ExtResource("15_forest")]
+position = Vector3(-60, 18, -420)
+rotation = Vector3(0, 0.3, 0)
+script = ExtResource("2_island")
+island_id = "pinewhistle"
+display_name = "Pinewhistle"
+
+[node name="CloudberryFarm" parent="Islands" instance=ExtResource("16_farm")]
+position = Vector3(470, -18, 160)
+rotation = Vector3(0, 1.7, 0)
+script = ExtResource("2_island")
+island_id = "cloudberry_farm"
+display_name = "Cloudberry Farm"
+
+[node name="Bellfry" parent="Islands" instance=ExtResource("17_chapel")]
+position = Vector3(230, 38, -430)
+rotation = Vector3(0, -1.4, 0)
+script = ExtResource("2_island")
+island_id = "bellfry"
+display_name = "Bellfry"
+
+[node name="StargazersPerch" parent="Islands" instance=ExtResource("18_obs")]
+position = Vector3(-500, 62, 60)
+rotation = Vector3(0, 0.9, 0)
+script = ExtResource("2_island")
+island_id = "stargazers_perch"
+display_name = "Stargazer's Perch"
+
+[node name="HollowArch" parent="Islands" instance=ExtResource("19_arch")]
+position = Vector3(40, 6, 420)
+rotation = Vector3(0, 0.4, 0)
+script = ExtResource("2_island")
+island_id = "hollow_arch"
+display_name = "Hollow Arch"
+
+[node name="Islets" type="Node3D" parent="."]
+
+[node name="IsletA1" parent="Islets" instance=ExtResource("20_islet_a")]
+position = Vector3(130, 35, 60)
+rotation = Vector3(0, 0.5, 0)
+
+[node name="IsletA2" parent="Islets" instance=ExtResource("20_islet_a")]
+position = Vector3(-190, 25, 40)
+rotation = Vector3(0, 2.1, 0)
+scale = Vector3(1.3, 1.3, 1.3)
+
+[node name="IsletA3" parent="Islets" instance=ExtResource("20_islet_a")]
+position = Vector3(90, -8, 180)
+rotation = Vector3(0, 4, 0)
+scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="IsletB1" parent="Islets" instance=ExtResource("21_islet_b")]
+position = Vector3(-200, 40, -280)
+rotation = Vector3(0, 1, 0)
+
+[node name="IsletB2" parent="Islets" instance=ExtResource("21_islet_b")]
+position = Vector3(350, 25, -300)
+rotation = Vector3(0, 3, 0)
+scale = Vector3(1.4, 1.4, 1.4)
+
+[node name="IsletB3" parent="Islets" instance=ExtResource("21_islet_b")]
+position = Vector3(-380, 10, 330)
+rotation = Vector3(0, 5, 0)
+
+[node name="IsletC1" parent="Islets" instance=ExtResource("22_islet_c")]
+position = Vector3(380, -5, 40)
+rotation = Vector3(0, 0.8, 0)
+
+[node name="IsletC2" parent="Islets" instance=ExtResource("22_islet_c")]
+position = Vector3(-440, 20, -200)
+rotation = Vector3(0, 2.6, 0)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="IsletC3" parent="Islets" instance=ExtResource("22_islet_c")]
+position = Vector3(160, 50, -250)
+rotation = Vector3(0, 4.4, 0)
+
+[node name="Clouds" type="Node3D" parent="."]
+
+[node name="Cloud1" parent="Clouds" instance=ExtResource("24_cloud_b")]
+position = Vector3(50, 70, -200)
+script = ExtResource("3_drifter")
+orbit_radius = 30.0
+
+[node name="Cloud2" parent="Clouds" instance=ExtResource("23_cloud_a")]
+position = Vector3(-150, 90, 0)
+rotation = Vector3(0, 1.2, 0)
+script = ExtResource("3_drifter")
+orbit_radius = 25.0
+
+[node name="Cloud3" parent="Clouds" instance=ExtResource("25_cloud_c")]
+position = Vector3(250, 55, 50)
+rotation = Vector3(0, 2.4, 0)
+script = ExtResource("3_drifter")
+
+[node name="Cloud4" parent="Clouds" instance=ExtResource("24_cloud_b")]
+position = Vector3(-350, 80, 250)
+rotation = Vector3(0, 0.7, 0)
+script = ExtResource("3_drifter")
+orbit_radius = 20.0
+
+[node name="Cloud5" parent="Clouds" instance=ExtResource("23_cloud_a")]
+position = Vector3(150, 100, 350)
+rotation = Vector3(0, 3.1, 0)
+script = ExtResource("3_drifter")
+
+[node name="Cloud6" parent="Clouds" instance=ExtResource("25_cloud_c")]
+position = Vector3(-250, 60, -350)
+script = ExtResource("3_drifter")
+orbit_radius = 15.0
+
+[node name="Cloud7" parent="Clouds" instance=ExtResource("24_cloud_b")]
+position = Vector3(400, 85, -250)
+rotation = Vector3(0, 1.9, 0)
+script = ExtResource("3_drifter")
+
+[node name="Cloud8" parent="Clouds" instance=ExtResource("23_cloud_a")]
+position = Vector3(-50, 40, 200)
+rotation = Vector3(0, 0.3, 0)
+script = ExtResource("3_drifter")
+orbit_radius = 20.0
+
+[node name="Cloud9" parent="Clouds" instance=ExtResource("24_cloud_b")]
+position = Vector3(0, -40, -150)
+script = ExtResource("3_drifter")
+
+[node name="Cloud10" parent="Clouds" instance=ExtResource("23_cloud_a")]
+position = Vector3(300, -35, 300)
+rotation = Vector3(0, 2.2, 0)
+script = ExtResource("3_drifter")
+
+[node name="Cloud11" parent="Clouds" instance=ExtResource("24_cloud_b")]
+position = Vector3(-400, -30, -300)
+rotation = Vector3(0, 0.9, 0)
+script = ExtResource("3_drifter")
+
+[node name="Cloud12" parent="Clouds" instance=ExtResource("25_cloud_c")]
+position = Vector3(550, 70, 0)
+rotation = Vector3(0, 1.4, 0)
+script = ExtResource("3_drifter")
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="Storm1" parent="Hazards" instance=ExtResource("30_storm")]
+position = Vector3(200, 60, -250)
+
+[node name="Storm2" parent="Hazards" instance=ExtResource("30_storm")]
+position = Vector3(-300, 50, 200)
+orbit_radius = 100.0
+
+[node name="Balloons" type="Node3D" parent="."]
+
+[node name="Balloon1" parent="Balloons" instance=ExtResource("31_balloon")]
+position = Vector3(60, 55, 180)
+
+[node name="Balloon2" parent="Balloons" instance=ExtResource("31_balloon")]
+position = Vector3(-260, 75, -40)
+
+[node name="Balloon3" parent="Balloons" instance=ExtResource("31_balloon")]
+position = Vector3(330, 60, 400)
+
+[node name="BoostRings" type="Node3D" parent="."]
+
+[node name="ToMill1" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(100, 20, -47)
+rotation = Vector3(0, -1.134, 0)
+
+[node name="ToMill2" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(160, 22, -75)
+rotation = Vector3(0, -1.134, 0)
+
+[node name="ToMill3" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(220, 18, -103)
+rotation = Vector3(0, -1.134, 0)
+
+[node name="ToVillage1" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(-70, 8, 80)
+rotation = Vector3(0, 2.42, 0)
+
+[node name="ToVillage2" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(-110, 4, 125)
+rotation = Vector3(0, 2.42, 0)
+
+[node name="ToVillage3" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(-150, 0, 170)
+rotation = Vector3(0, 2.42, 0)
+
+[node name="ToPerch1" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(-380, 42, -90)
+rotation = Vector3(0, 2.456, 0)
+
+[node name="ToPerch2" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(-420, 50, -30)
+rotation = Vector3(0, 2.456, 0)
+
+[node name="ToFarm1" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(300, -6, 240)
+rotation = Vector3(0, -1.138, 0)
+
+[node name="ToFarm2" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(360, -10, 210)
+rotation = Vector3(0, -1.138, 0)
+
+[node name="ToBellfry1" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(40, 26, -425)
+rotation = Vector3(0, -1.536, 0)
+
+[node name="ToBellfry2" parent="BoostRings" instance=ExtResource("32_ring")]
+position = Vector3(120, 30, -428)
+rotation = Vector3(0, -1.536, 0)
+
+[node name="Stamps" type="Node3D" parent="."]
+
+[node name="Stamp1" parent="Stamps" instance=ExtResource("33_stamp")]
+position = Vector3(60, 30, 120)
+
+[node name="Stamp2" parent="Stamps" instance=ExtResource("33_stamp")]
+position = Vector3(-90, 55, -200)
+
+[node name="Stamp3" parent="Stamps" instance=ExtResource("33_stamp")]
+position = Vector3(260, 70, 60)
+
+[node name="Stamp4" parent="Stamps" instance=ExtResource("33_stamp")]
+position = Vector3(-300, 15, 60)
+
+[node name="Stamp5" parent="Stamps" instance=ExtResource("33_stamp")]
+position = Vector3(100, -20, 330)
+
+[node name="Stamp6" parent="Stamps" instance=ExtResource("33_stamp")]
+position = Vector3(45, -20, 0)

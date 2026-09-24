@@ -18,6 +18,9 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+Controls="*res://scripts/autoload/controls.gd"
+Save="*res://scripts/autoload/save.gd"
+Game="*res://scripts/autoload/game.gd"
 Dev="*res://scripts/autoload/dev.gd"
 
 [display]
@@ -28,6 +31,20 @@ window/size/window_width_override=1600
 window/size/window_height_override=900
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[importer_defaults]
+
+scene={
+"import_script/path": "res://pipeline/post_import.gd",
+"meshes/ensure_tangents": false,
+"meshes/generate_lods": false
+}
+
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="plane"
+3d_physics/layer_3="pickups"
 
 [physics]
 

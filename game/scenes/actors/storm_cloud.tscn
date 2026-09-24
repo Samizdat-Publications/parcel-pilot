@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/storm_cloud.gd" id="1_storm"]
+[ext_resource type="PackedScene" path="res://assets/models/storm_cloud.glb" id="2_model"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_zone"]
+size = Vector3(50, 13, 22)
+
+[node name="StormCloud" type="Node3D" groups=["storm_clouds"]]
+script = ExtResource("1_storm")
+orbit_radius = 110.0
+orbit_speed = 0.015
+bob_height = 3.0
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+
+[node name="Zone" type="Area3D" parent="."]
+collision_layer = 4
+collision_mask = 2
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Zone"]
+position = Vector3(0, 5, 0)
+shape = SubResource("BoxShape3D_zone")

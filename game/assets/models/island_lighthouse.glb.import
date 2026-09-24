@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://doh27jrysdcd4"
-path="res://.godot/imported/plane.glb-e70368a8b3b1c124d74405ad0c00304c.scn"
+uid="uid://c7kekr1fo3g15"
+path="res://.godot/imported/island_lighthouse.glb-a5f3b2f7ed658cd48f6fa5e8e67db93c.scn"
 
 [deps]
 
-source_file="res://assets/models/plane.glb"
-dest_files=["res://.godot/imported/plane.glb-e70368a8b3b1c124d74405ad0c00304c.scn"]
+source_file="res://assets/models/island_lighthouse.glb"
+dest_files=["res://.godot/imported/island_lighthouse.glb-a5f3b2f7ed658cd48f6fa5e8e67db93c.scn"]
 
 [params]
 
