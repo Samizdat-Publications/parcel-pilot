@@ -20,10 +20,20 @@ PowerShell (note the `&` call operator):
 ```
 Or open `game/project.godot` in the Godot editor and press F5.
 
-## Build the Windows .exe (the open task)
+## Windows .exe (done)
 
-`game/export_presets.cfg` already has a "Windows Desktop" preset (single exe, pck embedded) that writes
-`build/export/ParcelPilot.exe` (build/ is gitignored). The only missing piece is Godot's export templates:
+Built and verified on 2026-09-24: `build/export/ParcelPilot.exe` (single 114 MB file, game data embedded;
+build/ is gitignored so it is not in the repo). The exported exe ran the full capture tour with zero errors at
+212 fps. Only the Windows templates were installed (from the official 4.7.2 archive) into
+`%APPDATA%\Godot\export_templates\4.7.2.stable\`; other platforms would need the full template set.
+Launch it from PowerShell:
+```powershell
+& "C:\Users\stewa\ClaudeProjects\Opu5.5 Game Prompt\parcel-pilot\build\export\ParcelPilot.exe"
+```
+To rebuild after changes, run step 3 below. For a fresh machine, the full recipe:
+
+`game/export_presets.cfg` has a "Windows Desktop" preset (single exe, pck embedded) that writes
+`build/export/ParcelPilot.exe`. It needs Godot's export templates:
 
 1. Download the official templates for this exact version:
    https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
