@@ -29,3 +29,12 @@ before calling anything done. Commit at every working milestone.
 
 Tools: Godot 4.7.2 console build and Blender 5.1.2 are auto-detected by `tools/toolpaths.py`
 (override with the `GODOT` and `BLENDER` environment variables).
+
+- `python tools/build_assets.py [--only name]` rebuild models, previews, icons
+- `python tools/build_audio.py` then `python tools/audio_report.py` rebuild and check sounds
+- `python tools/check.py --milestone <m> [--showcase]` the full gate
+- `python tools/lookdev.py variants.json` compare lighting variants side by side
+- `python tools/snap.py "caption"` add a progress snapshot to docs/progress
+- `python tools/make_clip.py` record gameplay into docs/media/gameplay.webp
+- Autoloads must not `preload` assets (they compile before a fresh clone's first import).
+- Quit from scenarios and tests only after `await Audio.shutdown()` so nothing leaks.

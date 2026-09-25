@@ -47,3 +47,13 @@ M3 in progress: every sound synthesized in Python (19 effects plus a music loop,
 ![flight](004_juice_synthesized_audio_particles_polish_flight.png)
 ![delivery](004_juice_synthesized_audio_particles_polish_delivery.png)
 ![island_gallery.png](004_juice_synthesized_audio_particles_polish_island_gallery.png)
+
+## 005 Shipped: final build
+
+2026-09-24 20:07, commit `1e9f65c`
+
+M4: the verification gate is green across all eight steps (assets, audio, import, unit, input, bot, capture, showcase), a fresh clone imports cleanly and passes the headless tests, the README tells the whole story, and gameplay footage lives in docs/media/gameplay.webp.
+
+![01_title](../devlog/m4/01_title.png)
+![04_delivered](../devlog/m4/04_delivered.png)
+![07_results](../devlog/m4/07_results.png)

@@ -1,6 +1,7 @@
 # Parcel Pilot: design spec
 
-Status: approved by delegation (the brief granted full creative control). Owner: Claude.
+Status: shipped (M0 to M4 complete). Design approved by delegation: the brief granted full
+creative control.
 
 ## 1. Pitch
 
@@ -171,12 +172,15 @@ scenes/main.tscn
 `python tools/check.py` runs, in order:
 
 1. Asset build (Blender headless) and asset report sanity (tri budgets, required markers).
-2. Godot headless import: zero import errors.
-3. Headless test suite: unit tests for rules, plus a bot playthrough at fixed 60 fps that
-   must complete deliveries and reach the results screen.
-4. Windowed scenario runs that capture PNGs from the player camera at scripted moments into
-   `docs/devlog/<milestone>/`.
-5. Log scan: any `ERROR`, `SCRIPT ERROR`, or `WARNING` line fails the check.
+2. Audio build and report: no clipping, no DC offset, seamless loop seams.
+3. Godot headless import: zero import errors.
+4. Headless unit tests for the rules.
+5. Headless input test: real key events start a shift, steer, boost, pause and resume.
+6. Headless bot playthrough at a fixed 60 fps that must complete deliveries and reach the
+   results screen.
+7. Windowed scenario runs that capture PNGs from the player camera at scripted moments into
+   `docs/devlog/<milestone>/` (plus, with `--showcase`, a gallery of every island).
+8. Log scan: any `ERROR`, `SCRIPT ERROR`, or `WARNING` line fails the check.
 
 Then a manual review of every screenshot against the milestone checklist. Anything wrong is
 fixed and the whole check re-run before the milestone is committed.

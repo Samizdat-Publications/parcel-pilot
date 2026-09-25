@@ -2,6 +2,9 @@
 
 > Executed inline by the author (full creative control was delegated). Code lives in the
 > repo, not in this plan; each task lists files, interfaces, and how it is verified.
+>
+> **Status: complete.** M0 to M4 each landed as a commit that passed `tools/check.py`;
+> captures for every milestone are in `docs/devlog/`, the timeline in `docs/progress/LOG.md`.
 
 **Goal:** a complete, polished arcade sky-courier game whose every model is a Blender
 script and every sound is synthesized, verified by automated player-camera captures.

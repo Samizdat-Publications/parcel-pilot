@@ -14,6 +14,8 @@ const STOPS := [
 	["StargazersPerch", 300.0, 14.0, 3.0],
 	["HollowArch", 20.0, 6.0, 4.0],
 	["CloudberryFarm", 120.0, 18.0, 3.2],
+	["OrchardRest", 60.0, 14.0, 3.2],
+	["Pinewhistle", 200.0, 20.0, 3.2],
 ]
 
 
