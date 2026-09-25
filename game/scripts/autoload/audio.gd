@@ -38,6 +38,7 @@ var _engine: AudioStreamPlayer
 var _wind: AudioStreamPlayer
 var _music: AudioStreamPlayer
 var _duck := 0.0
+var _duck_until := 0.0
 var _music_target_db := MUSIC_DB
 
 
@@ -84,10 +85,11 @@ func play(sound: String, volume_db := 0.0, pitch := 1.0, pitch_jitter := 0.0) ->
 	p.play()
 
 
-## Lowers the music for a moment so a fanfare can shine.
+## Lowers the music for a moment so a fanfare can shine. Overlapping ducks keep the
+## deepest level until the latest one ends (no early reset from a shorter duck).
 func duck(amount_db: float, seconds: float) -> void:
 	_duck = maxf(_duck, amount_db)
-	get_tree().create_timer(seconds, true, false, true).timeout.connect(func() -> void: _duck = 0.0)
+	_duck_until = maxf(_duck_until, Time.get_ticks_msec() / 1000.0 + seconds)
 
 
 func set_music_level(db: float) -> void:
@@ -105,6 +107,8 @@ func set_flight(speed_ratio: float, boosting: bool, mix: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if _duck > 0.0 and Time.get_ticks_msec() / 1000.0 >= _duck_until:
+		_duck = 0.0
 	var goal := _music_target_db - _duck
 	_music.volume_db = move_toward(_music.volume_db, goal, delta * 24.0)
 

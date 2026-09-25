@@ -53,8 +53,6 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	var mix := 1.0 if Game.state in [Game.State.COUNTDOWN, Game.State.PLAYING] else 0.45
-	if Game.state == Game.State.PAUSED:
-		mix = 0.0
 	Audio.set_flight(plane.speed_ratio(), plane.boosting, mix)
 
 
@@ -115,6 +113,8 @@ func _on_state_changed(state: Game.State, previous: Game.State) -> void:
 			plane.frozen = false
 		Game.State.PAUSED:
 			Audio.set_music_level(Audio.MUSIC_DB - 8.0)
+			# _process stops while the tree is paused, so silence the flight loops here.
+			Audio.set_flight(plane.speed_ratio(), false, 0.0)
 		Game.State.RESULTS:
 			plane.input_source = autopilot
 			Audio.set_music_level(Audio.MUSIC_DB)

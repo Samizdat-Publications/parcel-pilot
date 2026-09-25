@@ -146,6 +146,8 @@ def main():
     step_godot(gate, "import", ["--headless", "--path", GAME, "--import"], "import.log", 600)
     step_godot(gate, "unit", ["--headless", "--path", GAME, "--scene", "res://tests/test_runner.tscn"],
                "unit.log", 300)
+    step_godot(gate, "input", ["--headless", "--fixed-fps", "60", "--disable-vsync", "--path", GAME,
+                               "--", "--scenario=input_check", f"--seed={args.seed}"], "input.log", 300)
     step_godot(gate, "bot", ["--headless", "--fixed-fps", "60", "--disable-vsync", "--path", GAME,
                              "--", "--scenario=bot_shift", f"--seed={args.seed}"], "bot.log", 900)
     if not args.skip_capture:
