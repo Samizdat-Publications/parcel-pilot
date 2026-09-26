@@ -121,8 +121,7 @@ def whole_shift(shift, out):
     for m in shift["marks"]:
         if m["kind"] in ("go", "delivery", "stamp", "ring", "zap", "crash", "results"):
             events.append({"t": round(m["t"] - start, 2), "kind": m["kind"], "label": m["label"]})
-    with open(os.path.join(SITE_MEDIA, "chapters.json"), "w", encoding="utf-8", newline="
-") as fh:
+    with open(os.path.join(SITE_MEDIA, "chapters.json"), "w", encoding="utf-8", newline="\n") as fh:
         json.dump({"duration": round(dur, 2), "stats": shift["stats"], "events": events}, fh, indent=1)
     return dur, kbps
 
