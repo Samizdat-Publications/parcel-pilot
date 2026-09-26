@@ -4,8 +4,26 @@ extends Node3D
 ## in world.tscn; this script only answers questions about them.
 
 const HUB_ID := "post_office"
+## The Compatibility renderer (the web build) fogs and lights the cloud sea brighter than
+## Forward+, so there the sea is deepened and the height fog dropped. Matched side by
+## side against the desktop look with tools/lookdev.py.
+const COMPAT_SEA_TOP := Color(0.68, 0.6, 0.72)
+## In a browser every draw call is expensive and the sun's shadow cascades were over half
+## of them, so the web build uses two cascades over a shorter range.
+const COMPAT_SHADOW_DISTANCE := 300.0
 
 @onready var _islands_root: Node3D = $Islands
+
+
+func _ready() -> void:
+	if RenderingServer.get_current_rendering_method() == "gl_compatibility":
+		($Environment as WorldEnvironment).environment.fog_height_density = 0.0
+		var sea := ($CloudSea as MeshInstance3D).mesh.surface_get_material(0) as ShaderMaterial
+		sea.set_shader_parameter("top_color", COMPAT_SEA_TOP)
+		sea.set_shader_parameter("backlight_strength", 0.0)
+		var sun := $Sun as DirectionalLight3D
+		sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
+		sun.directional_shadow_max_distance = COMPAT_SHADOW_DISTANCE
 
 
 func islands() -> Array[Island]:

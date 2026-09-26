@@ -99,7 +99,8 @@ func _enter_free_flight() -> void:
 
 func _apply_settings() -> void:
 	player_input.invert_pitch = bool(Save.settings["invert_pitch"])
-	if Dev.args.has("scenario"):
+	# Browsers only allow fullscreen from a click or key press (the pause menu toggle).
+	if Dev.args.has("scenario") or OS.has_feature("web"):
 		return
 	var want := DisplayServer.WINDOW_MODE_FULLSCREEN if bool(Save.settings["fullscreen"]) else DisplayServer.WINDOW_MODE_WINDOWED
 	if DisplayServer.window_get_mode() != want:

@@ -38,6 +38,11 @@ func get_controls(plane: MailPlane) -> Vector3:
 	return _steer(plane, goal)
 
 
+## Steering toward any point, for scripted shots (tests/scenarios/film.gd).
+func steer_to(plane: MailPlane, goal: Vector3) -> Vector3:
+	return _steer(plane, goal)
+
+
 func _steer(plane: MailPlane, goal: Vector3) -> Vector3:
 	var to := goal - plane.global_position
 	var desired_yaw := atan2(-to.x, -to.z)

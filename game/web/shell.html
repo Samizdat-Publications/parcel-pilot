@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+<title>Parcel Pilot</title>
+<meta name="description" content="Parcel Pilot: an arcade sky-courier game. Play it in your browser.">
+<meta name="theme-color" content="#8f7f9e">
+<style>
+:root {
+	--ink: #3a2c24;
+	--cream: #fff6e6;
+	--paper: #fbeed4;
+	--red: #d9412f;
+	--gold: #ffc93d;
+	--navy: #2e3e5c;
+	--font: Bahnschrift, "DIN Alternate", "DIN Condensed", "Segoe UI", system-ui, sans-serif;
+}
+html, body, #canvas { margin: 0; padding: 0; border: 0; }
+body { background: #8f7f9e; overflow: hidden; touch-action: none; font-family: var(--font); color: var(--ink); }
+#canvas { display: block; }
+#canvas:focus { outline: none; }
+
+#status {
+	position: fixed; inset: 0; z-index: 2;
+	display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+	padding: 24px; box-sizing: border-box; text-align: center;
+	background:
+		radial-gradient(120% 60% at 50% 108%, #efe3ec 0 38%, transparent 62%),
+		radial-gradient(60% 30% at 12% 100%, #e8dcea 0 40%, transparent 70%),
+		radial-gradient(60% 30% at 88% 100%, #e8dcea 0 40%, transparent 70%),
+		linear-gradient(180deg, #8f7f9e 0%, #c9a4a6 48%, #f2c49b 72%, #f6d8b8 100%);
+	transition: opacity .45s ease;
+}
+#status.done { opacity: 0; pointer-events: none; }
+#logo { width: min(640px, 86vw); height: auto; filter: drop-shadow(0 10px 18px rgba(58, 44, 36, .28)); }
+#logo[hidden] { display: none; }
+.wordmark { font-size: clamp(40px, 9vw, 88px); font-weight: 800; letter-spacing: .02em; color: var(--cream);
+	-webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; text-shadow: 0 6px 0 rgba(58, 44, 36, .35); }
+.card {
+	width: min(460px, 88vw); box-sizing: border-box; padding: 16px 20px 18px;
+	background: var(--paper); border: 3px solid var(--ink); border-radius: 18px;
+	box-shadow: 0 6px 0 rgba(58, 44, 36, .35);
+}
+.tag { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+#line { font-size: 22px; font-weight: 700; margin: 4px 0 12px; min-height: 1.3em; }
+.bar { height: 14px; border: 2px solid var(--ink); border-radius: 10px; background: #e9d9bb; overflow: hidden; }
+#fill { position: relative; height: 100%; width: 0; overflow: hidden; background: var(--gold);
+	border-right: 2px solid var(--ink); box-sizing: border-box; transition: width .2s linear; }
+/* The stripes move with a transform, which the browser animates off the main thread, so
+   they keep moving while the engine compiles its shaders and the page is otherwise busy. */
+#fill::before { content: ""; position: absolute; top: 0; bottom: 0; left: -34px; right: -34px; will-change: transform;
+	background: repeating-linear-gradient(-45deg, var(--gold) 0 12px, #f4b72c 12px 24px); animation: slide .9s linear infinite; }
+#fill.busy { width: 100% !important; border-right: 0; }
+@keyframes slide { to { transform: translateX(33.94px); } }
+#pct { font-size: 13px; margin-top: 8px; opacity: .75; font-variant-numeric: tabular-nums; }
+.hint { font-size: 14px; color: var(--cream); max-width: 600px; line-height: 1.9; padding: 6px 14px; border-radius: 14px;
+	background: rgba(58, 44, 36, .55); }
+.hint kbd { font: inherit; font-weight: 700; padding: 1px 7px; border: 2px solid var(--ink); border-radius: 6px;
+	background: var(--cream); color: var(--ink); text-shadow: none; }
+.back { position: fixed; top: 14px; left: 16px; z-index: 3; color: var(--cream); font-size: 14px; text-decoration: none;
+	padding: 6px 12px; border-radius: 999px; background: rgba(58, 44, 36, .35); }
+.back:hover, .back:focus-visible { background: rgba(58, 44, 36, .6); }
+#notice[hidden], #touch[hidden] { display: none; }
+#notice { color: var(--red); font-weight: 700; margin-top: 10px; white-space: pre-line; }
+.btn { font: inherit; font-weight: 800; font-size: 18px; padding: 10px 22px; margin-top: 12px; cursor: pointer;
+	color: var(--cream); background: var(--red); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 0 4px 0 var(--ink); }
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+#note { font-size: 13px; margin-top: 6px; line-height: 1.4; }
+#note[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { #fill::before { animation: none; } #status { transition: none; } }
+</style>
+$GODOT_HEAD_INCLUDE
+</head>
+<body>
+<canvas id="canvas">Your browser does not support the canvas tag.</canvas>
+<noscript>Parcel Pilot needs JavaScript to run in the browser.</noscript>
+
+<div id="status" role="status" aria-live="polite">
+	<a class="back" id="back" href="../">&larr; Parcel Pilot home</a>
+	<img id="logo" src="../media/logo.webp" alt="Parcel Pilot" width="1400" height="528">
+	<div class="card">
+		<div class="tag">Special delivery, by air</div>
+		<div id="line">Sorting the mail bag</div>
+		<div class="bar"><div id="fill" class="busy"></div></div>
+		<div id="pct">Loading the game</div>
+		<div id="note" hidden>First visit: your browser is preparing the 3D shaders, which takes up to half a minute. Next time it starts in seconds.</div>
+		<div id="notice" hidden></div>
+		<div id="touch" hidden>
+			<p>Parcel Pilot is flown with a keyboard or a gamepad. On a phone or tablet without one, you will not be able to steer.</p>
+			<button class="btn" id="anyway" type="button">Load it anyway</button>
+		</div>
+	</div>
+	<p class="hint"><kbd>W</kbd> <kbd>S</kbd> climb and dive, <kbd>A</kbd> <kbd>D</kbd> turn, <kbd>Shift</kbd> boost, <kbd>Esc</kbd> pause. A gamepad works too.</p>
+</div>
+
+<script>
+// Cloudflare Pages serves files of up to 25 MiB, and Godot's engine (index.wasm) is about
+// 40 MB, so tools/build_site.py splits it and lists the parts here. This joins them back
+// into one streamed response before Godot's loader sees it. With no parts listed (a plain
+// local export) nothing is patched.
+const WASM_PARTS = [];
+(function () {
+	if (!WASM_PARTS.length) return;
+	const realFetch = window.fetch.bind(window);
+	window.fetch = function (input, init) {
+		const url = typeof input === 'string' ? input : input.url;
+		if (!/(^|\/)index\.wasm(\?|$)/.test(url)) return realFetch(input, init);
+		const pending = WASM_PARTS.map((part) => realFetch(part));
+		let index = 0;
+		let reader = null;
+		const body = new ReadableStream({
+			async pull(controller) {
+				for (;;) {
+					if (!reader) {
+						if (index >= pending.length) { controller.close(); return; }
+						const response = await pending[index++];
+						if (!response.ok) throw new Error('Failed loading ' + response.url);
+						reader = response.body.getReader();
+					}
+					const { done, value } = await reader.read();
+					if (done) { reader = null; continue; }
+					controller.enqueue(value);
+					return;
+				}
+			},
+		});
+		return Promise.resolve(new Response(body, { headers: { 'Content-Type': 'application/wasm' } }));
+	};
+}());
+</script>
+<script>
+// Each frame, Emscripten's commit step (blitOffscreenFramebuffer in the engine's JS) asks
+// WebGL whether the scissor test is on before it copies the frame to the canvas. That one
+// question makes the page wait for the GPU process to finish the whole frame, so the CPU
+// and GPU never work in parallel. Tracking the scissor state here answers it at once:
+// about 44 fps became 54 on the target laptop under load, and 68 when it was idle.
+// (Caching Godot's per-frame framebuffer check as well was measured and did not help.)
+(function () {
+	const P = window.WebGL2RenderingContext && WebGL2RenderingContext.prototype;
+	if (!P) return;
+	const SCISSOR_TEST = 0x0C11;
+	const enable = P.enable;
+	const disable = P.disable;
+	const getParameter = P.getParameter;
+	P.enable = function (cap) { if (cap === SCISSOR_TEST) this.__scissor = true; return enable.call(this, cap); };
+	P.disable = function (cap) { if (cap === SCISSOR_TEST) this.__scissor = false; return disable.call(this, cap); };
+	P.getParameter = function (pname) { return pname === SCISSOR_TEST ? !!this.__scissor : getParameter.call(this, pname); };
+}());
+</script>
+<script src="$GODOT_URL"></script>
+<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+const engine = new Engine(GODOT_CONFIG);
+
+(function () {
+	const status = document.getElementById('status');
+	const fill = document.getElementById('fill');
+	const pct = document.getElementById('pct');
+	const line = document.getElementById('line');
+	const notice = document.getElementById('notice');
+	const logo = document.getElementById('logo');
+	logo.addEventListener('error', () => {
+		const word = document.createElement('div');
+		word.className = 'wordmark';
+		word.textContent = 'PARCEL PILOT';
+		logo.replaceWith(word);
+	});
+
+	const lines = ['Sorting the mail bag', 'Fuelling the biplane', 'Winding the propeller', 'Checking the weather',
+		'Licking the stamps', 'Polishing the hoops', 'Waking the gulls'];
+	let lineIndex = 0;
+	const ticker = setInterval(() => {
+		lineIndex = (lineIndex + 1) % lines.length;
+		line.textContent = lines[lineIndex];
+	}, 1600);
+
+	function fail(err) {
+		console.error(err);
+		clearInterval(ticker);
+		fill.classList.remove('busy');
+		line.textContent = 'The plane would not start';
+		notice.textContent = (err && err.message) ? err.message : String(err);
+		notice.hidden = false;
+	}
+
+	let warm = false;
+	try { warm = localStorage.getItem('parcel-pilot-warm') === '1'; } catch (e) { warm = false; }
+
+	// Godot compiles its shaders as it starts, which keeps the page busy for a while (much
+	// longer on a first visit, before the browser has cached them). Show that message
+	// and let it paint before the engine takes over.
+	const realStart = engine.start.bind(engine);
+	engine.start = function (...args) {
+		clearInterval(ticker);
+		fill.classList.add('busy');
+		line.textContent = 'Warming up the engine';
+		pct.textContent = warm ? 'Almost there' : 'Compiling shaders';
+		document.getElementById('note').hidden = warm;
+		return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+			.then(() => realStart(...args));
+	};
+
+	function start() {
+		const missing = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
+		if (missing.length) {
+			fail(new Error('This browser is missing:\n' + missing.join('\n') + '\nTry a recent Chrome, Edge, Firefox or Safari.'));
+			return;
+		}
+		engine.startGame({
+			onProgress(current, total) {
+				if (current > 0 && total > 0) {
+					fill.classList.remove('busy');
+					const p = Math.min(100, Math.round((current / total) * 100));
+					fill.style.width = p + '%';
+					pct.textContent = 'Loading the game: ' + p + '%';
+				} else {
+					fill.classList.add('busy');
+				}
+			},
+		}).then(() => {
+			clearInterval(ticker);
+			try { localStorage.setItem('parcel-pilot-warm', '1'); } catch (e) { /* private mode */ }
+			status.classList.add('done');
+			setTimeout(() => status.remove(), 500);
+			document.getElementById('canvas').focus();
+		}, fail);
+	}
+
+	const touchOnly = window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(pointer: fine)').matches;
+	if (touchOnly) {
+		document.getElementById('touch').hidden = false;
+		document.querySelector('.bar').hidden = true;
+		pct.hidden = true;
+		document.getElementById('anyway').addEventListener('click', () => {
+			document.getElementById('touch').hidden = true;
+			document.querySelector('.bar').hidden = false;
+			pct.hidden = false;
+			start();
+		});
+	} else {
+		start();
+	}
+}());
+</script>
+</body>
+</html>

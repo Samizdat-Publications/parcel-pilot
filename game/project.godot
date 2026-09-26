@@ -34,6 +34,10 @@ window/size/window_height_override=900
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[editor]
+
+movie_writer/mjpeg_quality=0.95
+
 [importer_defaults]
 
 scene={

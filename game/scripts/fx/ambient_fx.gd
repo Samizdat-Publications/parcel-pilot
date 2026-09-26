@@ -90,12 +90,18 @@ static func beacon() -> Node3D:
 
 
 ## Swaps a Blender flag's material for the waving shader, keeping its palette color.
+## Not on the Compatibility renderer (the web build): there every extra shader costs
+## seconds of compiling on a first visit, so the flags keep their still palette cloth.
 static func wave_flag(flag: MeshInstance3D) -> void:
+	if RenderingServer.get_current_rendering_method() == "gl_compatibility":
+		return
 	var color := Color(0.85, 0.28, 0.23)
 	if flag.mesh != null and flag.mesh.get_surface_count() > 0:
-		var src := flag.mesh.surface_get_material(0) as StandardMaterial3D
-		if src != null:
-			color = src.albedo_color
+		# Palette colors ride in the vertices (pipeline/post_import.gd merges them there).
+		var colors: Variant = flag.mesh.surface_get_arrays(0)[Mesh.ARRAY_COLOR]
+		if colors is PackedColorArray and not (colors as PackedColorArray).is_empty():
+			var c: Color = (colors as PackedColorArray)[0]
+			color = Color(c.r, c.g, c.b)
 	var mat := ShaderMaterial.new()
 	mat.shader = FLAG_SHADER
 	mat.set_shader_parameter("albedo", color)

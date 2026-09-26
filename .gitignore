@@ -15,3 +15,7 @@ __pycache__/
 Thumbs.db
 .DS_Store
 .vscode/
+
+# The assembled public site and wrangler's local state (python tools/build_site.py)
+site-dist/
+.wrangler/

@@ -1,4 +1,4 @@
-"""Locate Blender and Godot. Override with the BLENDER / GODOT environment variables."""
+"""Locate Blender, Godot and ffmpeg. Override with the BLENDER / GODOT / FFMPEG environment variables."""
 
 import glob
 import os
@@ -53,4 +53,20 @@ def godot():
     found = _first_existing(candidates)
     if not found:
         sys.exit("Godot 4 not found. Set the GODOT environment variable to the executable.")
+    return found
+
+
+def ffmpeg():
+    """ffmpeg for the footage tools: FFMPEG, then the imageio-ffmpeg wheel, then PATH."""
+    env = os.environ.get("FFMPEG")
+    if env:
+        return env
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except ImportError:
+        pass
+    found = shutil.which("ffmpeg")
+    if not found:
+        sys.exit("ffmpeg not found. Run `pip install imageio-ffmpeg` or set the FFMPEG environment variable.")
     return found

@@ -57,3 +57,14 @@ M4: the verification gate is green across all eight steps (assets, audio, import
 ![01_title](../devlog/m4/01_title.png)
 ![04_delivered](../devlog/m4/04_delivered.png)
 ![07_results](../devlog/m4/07_results.png)
+
+## 006 Live on the web
+
+2026-09-26 16:51, commit `5e3f62a`
+
+M5: the game runs in the browser at https://parcel-pilot-1ms.pages.dev/play/ and the landing page at https://parcel-pilot-1ms.pages.dev/ shows it off: a hero reel of island fly-ins under the game's own 3D logo, six postcard clips, one whole shift with the synthesized sound and a clickable timeline, all ten islands, a sound board and a greybox-to-final slider. Every clip was filmed frame by frame by Godot's movie maker. Making the web build fast took three fixes found by measuring: one palette shader instead of one surface per color (draw calls 490 to 100), two shadow cascades in the browser, and a loader shim that stops a per-frame GPU wait.
+
+![landing_hero.png](006_live_on_the_web_landing_hero.png)
+![landing_postcard.png](006_live_on_the_web_landing_postcard.png)
+![landing_islands.png](006_live_on_the_web_landing_islands.png)
+![web_2_flight.png](006_live_on_the_web_web_2_flight.png)

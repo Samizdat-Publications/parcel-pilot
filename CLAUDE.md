@@ -36,5 +36,9 @@ Tools: Godot 4.7.2 console build and Blender 5.1.2 are auto-detected by `tools/t
 - `python tools/lookdev.py variants.json` compare lighting variants side by side
 - `python tools/snap.py "caption"` add a progress snapshot to docs/progress
 - `python tools/make_clip.py` record gameplay into docs/media/gameplay.webp
+- `python tools/film.py`, `python tools/make_media.py`, `python tools/build_site.py --deploy` film the game, cut the
+  site's media, and publish the landing page + web build to Cloudflare Pages (see HANDOFF.md)
+- The web build runs on the Compatibility renderer: check it there too, and keep distinct material shaders few
+  (each one costs seconds of compiling on a browser's first visit).
 - Autoloads must not `preload` assets (they compile before a fresh clone's first import).
 - Quit from scenarios and tests only after `await Audio.shutdown()` so nothing leaks.

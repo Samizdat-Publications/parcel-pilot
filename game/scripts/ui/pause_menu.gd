@@ -37,7 +37,9 @@ func _ready() -> void:
 	_first_button = _button(box, "Resume", Game.resume)
 	_button(box, "Restart shift", func() -> void: restart_requested.emit())
 	_button(box, "Title screen", func() -> void: title_requested.emit())
-	_button(box, "Quit", func() -> void: get_tree().quit())
+	if not OS.has_feature("web"):
+		# A browser tab cannot quit itself.
+		_button(box, "Quit", func() -> void: get_tree().quit())
 
 	var sep := HSeparator.new()
 	sep.add_theme_constant_override("separation", 14)

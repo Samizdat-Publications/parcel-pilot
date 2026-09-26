@@ -5,13 +5,32 @@ Python script run in Blender, every sound and the music are synthesized in Pytho
 every build is verified by a bot that plays the game and photographs it from the
 player's camera. No downloaded, purchased, or AI-generated assets.
 
+**[Play it in your browser](https://parcel-pilot-1ms.pages.dev/play/)** (free, no install,
+keyboard or gamepad) and see the **[landing page](https://parcel-pilot-1ms.pages.dev/)** for
+gameplay clips, one whole shift with sound, and all ten islands.
+
 ![Gameplay: an express delivery at Orchard Rest, then boosting toward Cloudberry Farm](docs/media/gameplay.webp)
 
 Fly a chunky red air-mail biplane across an archipelago of floating islands at golden
 hour. Every delivery hands you the next parcel, the tip drains while you fly, and fast
 drops add time to the shift clock and build a combo. A shift lasts two to five minutes.
 
+| | |
+|---|---|
+| ![Threading the hoop at Mossy Mill: Express, confetti and a parachute parcel](docs/media/deliver.webp)<br>**Thread the hoop.** Express, on time or late. | ![Boosting through a line of blue rings](docs/media/rings.webp)<br>**Ride the rings.** They top your boost back up. |
+| ![Flying into a thundercloud: a zap, and the parcel is damaged](docs/media/storm.webp)<br>**Mind the weather.** Thunderclouds dent the parcel. | ![Collecting a floating postage stamp in front of the balloon](docs/media/stamp.webp)<br>**Pocket the stamps.** Points and seconds. |
+| ![Approaching Beacon Point, the lighthouse island](docs/media/islands.webp)<br>**Ten islands**, each one a Python script. | ![The shift report with the rank stamped in red](docs/media/results.webp)<br>**Earn your rank**, from Trainee to Sky Postmaster. |
+
+Every clip is real footage of the finished game, rendered frame by frame by Godot's movie
+maker (`tools/film.py`) and cut by the event marks the game printed (`tools/make_media.py`).
+
 ## Play it
+
+**In a browser:** [parcel-pilot-1ms.pages.dev/play](https://parcel-pilot-1ms.pages.dev/play/).
+A desktop browser works best. The first visit takes up to half a minute to start while the
+browser compiles the 3D shaders; after that it starts in seconds.
+
+**On the desktop:**
 
 1. Install [Godot 4.7](https://godotengine.org/download) (the standard build).
 2. Open `game/project.godot` in Godot and press **F5**, or from a terminal:
@@ -19,6 +38,9 @@ drops add time to the shift clock and build a combo. A shift lasts two to five m
 ```bash
 godot --path game
 ```
+
+A Windows build (`ParcelPilot.exe`, one file) comes from the `Windows Desktop` export
+preset; see `HANDOFF.md` for the recipe.
 
 | Action | Keyboard | Gamepad |
 |---|---|---|
@@ -117,6 +139,54 @@ shutdown; an independent code review caught two more audio bugs. Other tools:
 side, `tools/audio_report.py` draws spectrograms so sounds can be reviewed by eye, and
 `tools/snap.py` adds entries to the [progress log](docs/progress/LOG.md).
 
+## The public site
+
+[parcel-pilot-1ms.pages.dev](https://parcel-pilot-1ms.pages.dev/) is a Cloudflare Pages site: the
+landing page (`site/`, plain HTML, CSS and JS in the game's own palette, system fonts only)
+at `/` and the game at `/play/`.
+
+```bash
+python tools/film.py
+```
+
+```bash
+python tools/make_media.py
+```
+
+```bash
+python tools/build_site.py --deploy
+```
+
+`film.py` records three reels under Godot's movie maker at 1080p: one whole shift flown by
+the bot (with the game's sound), a set of staged moments (a ring run, a stamp, a storm, an
+express delivery) and a fly-in to every island. `make_media.py` cuts the page's clips,
+posters, hero reel, the whole-shift video and its chapter timeline, and the README
+animations, all placed by event marks the game printed while filming. `build_site.py`
+exports the web build, assembles `site-dist/` and publishes it with wrangler
+(`--serve` runs it locally instead).
+
+Notes on the web build:
+
+* It runs on Godot's Compatibility renderer (WebGL 2), which has no SSAO and fogs the
+  cloud sea differently, so `game/scripts/world/world.gd` retunes the sea there. The look
+  was matched against the desktop build with `tools/lookdev.py`.
+* Cloudflare Pages serves files of up to 25 MiB and the engine is about 40 MB, so
+  `build_site.py` splits it and the page shell (`game/web/shell.html`) streams the parts
+  back together.
+* Pages ignores byte-range requests, which Safari needs for video, so
+  `functions/media/[[path]].js` answers them for the videos.
+* Every draw call is expensive in WebGL, and every palette color was its own surface
+  (about 40 per island). The import step (`game/pipeline/post_import.gd`) now merges each
+  mesh's palette surfaces into one, carrying each face's color, roughness, metallic and
+  glow in its vertices for one palette shader (`game/shaders/palette.gdshader`): draw
+  calls fell from about 490 to about 100 on the desktop too, with the same look.
+* A browser compiles each distinct material shader on a first visit (seconds apiece on
+  Windows), so fewer shaders also means a faster first start: about a minute became
+  about half a minute. Later visits start in a few seconds.
+* Each frame, Emscripten's commit step asked WebGL a question that made the page wait
+  for the GPU to finish the frame; the shell answers it itself, which let the CPU and GPU
+  overlap (about 44 fps became 54 to 68 in Chrome on the target laptop).
+
 ## Rebuild everything
 
 Blender 5.1 and Godot 4.7 are found automatically on Windows; set the `BLENDER` and
@@ -139,8 +209,11 @@ python tools/check.py --milestone wip --showcase
 
 ```
 blender/    lib (palette, geometry kit, export), kit (generators), assets (one file per model family)
-tools/      build_assets, build_audio + synth/, check (the gate), lookdev, snap, make_clip, audio_report
-game/       the Godot project: scripts, scenes, shaders, data (tuning .tres), tests, generated assets
+tools/      build_assets, build_audio + synth/, check (the gate), lookdev, snap, make_clip, audio_report,
+            film, make_media, build_site (the public site)
+game/       the Godot project: scripts, scenes, shaders, data (tuning .tres), tests, generated assets,
+            web/shell.html (the browser loading page)
+site/       the landing page and its media; functions/ holds the Pages Function for video ranges
 docs/       DESIGN.md (spec), PROMPT.md (the brief), PLAN.md, previews/, devlog/ (gate captures), progress/
 ```
 
@@ -151,6 +224,6 @@ model is a Blender script, in greybox, art, and juice milestones, capturing erro
 player-camera screenshots after each. [docs/PROMPT.md](docs/PROMPT.md) is that prompt
 rewritten as a reusable brief, [docs/DESIGN.md](docs/DESIGN.md) is the game design it
 produced, and the commit history follows the milestones: M0 foundations, M1 greybox
-loop, M2 art pass, M3 juice, M4 ship.
+loop, M2 art pass, M3 juice, M4 ship, M5 the web build and the public site.
 
 Built with Claude Code (Claude Opus 5.5).

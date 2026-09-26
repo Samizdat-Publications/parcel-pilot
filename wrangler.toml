@@ -1,0 +1,6 @@
+# Cloudflare Pages project for the public site (landing page at /, the game at /play/).
+# Build and publish with:
+#   python tools/build_site.py --deploy
+name = "parcel-pilot"
+compatibility_date = "2026-09-26"
+pages_build_output_dir = "site-dist"

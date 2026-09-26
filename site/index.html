@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcel Pilot: special delivery, by air</title>
+<meta name="description" content="An arcade sky-courier game you can play in your browser. Fly a red air-mail biplane between ten floating islands at golden hour. Every model is a Blender script and every sound is synthesized.">
+<meta name="theme-color" content="#8f7f9e">
+<link rel="canonical" href="https://parcel-pilot-1ms.pages.dev/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Parcel Pilot: special delivery, by air">
+<meta property="og:description" content="Fly a red air-mail biplane between ten floating islands. Thread the hoop, keep the tip, beat the clock. Free in your browser.">
+<meta property="og:url" content="https://parcel-pilot-1ms.pages.dev/">
+<meta property="og:image" content="https://parcel-pilot-1ms.pages.dev/media/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='10' width='52' height='44' rx='6' fill='%23fbeed4' stroke='%233a2c24' stroke-width='4'/%3E%3Cpath d='M8 14 32 34 56 14' fill='none' stroke='%23d9412f' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="media/logo.webp" type="image/webp">
+<link rel="stylesheet" href="site.css">
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+	<defs>
+		<symbol id="postmark" viewBox="0 0 160 110">
+			<g fill="none" stroke="currentColor" stroke-width="3">
+				<circle cx="52" cy="55" r="44"/>
+				<circle cx="52" cy="55" r="33" stroke-width="1.6"/>
+				<path d="M100 32c10-6 20 6 30 0s20 6 30 0M100 48c10-6 20 6 30 0s20 6 30 0M100 64c10-6 20 6 30 0s20 6 30 0M100 80c10-6 20 6 30 0s20 6 30 0"/>
+			</g>
+			<path id="pm-arc" d="M18 55a34 34 0 1 1 68 0" fill="none"/>
+			<text font-size="11" font-weight="700" letter-spacing="2" fill="currentColor"><textPath href="#pm-arc" startOffset="50%" text-anchor="middle">PARCEL PILOT</textPath></text>
+			<text x="52" y="60" font-size="13" font-weight="800" text-anchor="middle" fill="currentColor">AIR MAIL</text>
+			<text x="52" y="76" font-size="9" font-weight="700" text-anchor="middle" fill="currentColor" letter-spacing="1">GOLDEN HOUR</text>
+		</symbol>
+		<symbol id="envelope" viewBox="0 0 64 64">
+			<rect x="6" y="12" width="52" height="40" rx="5" fill="#fbeed4" stroke="#3a2c24" stroke-width="4"/>
+			<path d="M9 16 32 34 55 16" fill="none" stroke="#d9412f" stroke-width="5" stroke-linejoin="round"/>
+		</symbol>
+	</defs>
+</svg>
+
+<header class="topbar" id="topbar">
+	<a class="brand" href="#top" aria-label="Parcel Pilot, back to the top"><svg class="brand-mark" aria-hidden="true"><use href="#envelope"/></svg><span>Parcel Pilot</span></a>
+	<nav class="nav" aria-label="Sections">
+		<a href="#job">How it plays</a>
+		<a href="#watch">Watch a shift</a>
+		<a href="#islands">The islands</a>
+		<a href="#made">Made by code</a>
+	</nav>
+	<a class="btn btn-small" href="play/">Play</a>
+</header>
+
+<main id="main">
+<section class="hero" id="top" aria-label="Parcel Pilot">
+	<video class="hero-video" id="hero-video" muted loop playsinline preload="auto" poster="media/hero.jpg" aria-hidden="true">
+		<source src="media/hero.mp4" type="video/mp4">
+	</video>
+	<div class="hero-shade" aria-hidden="true"></div>
+	<div class="hero-inner">
+		<h1 class="hero-logo"><img src="media/logo.webp" alt="Parcel Pilot" width="1400" height="583"></h1>
+		<p class="tagline">Special delivery, by air.</p>
+		<p class="lede">Fly a chunky red air-mail biplane between ten floating islands at golden hour. Thread the hoop, keep the tip, beat the clock.</p>
+		<div class="cta">
+			<a class="btn btn-big" href="play/">Play in your browser</a>
+			<a class="btn btn-paper" href="#watch">Watch a whole shift</a>
+		</div>
+		<p class="fine">Free, no install. Keyboard or gamepad; a desktop browser works best.</p>
+	</div>
+	<button class="hero-toggle" id="hero-toggle" type="button" aria-pressed="false">Pause the reel</button>
+</section>
+<div class="airmail" aria-hidden="true"></div>
+
+<section class="facts" aria-label="Made entirely by code">
+	<ul class="stamps">
+		<li class="stamp-tile"><div class="perf"><b>26</b><span>models, every one a Blender script</span></div></li>
+		<li class="stamp-tile"><div class="perf"><b>20</b><span>sounds, all synthesized in Python</span></div></li>
+		<li class="stamp-tile"><div class="perf"><b>0</b><span>downloaded, bought or AI-generated assets</span></div></li>
+		<li class="stamp-tile"><div class="perf"><b>1</b><span>bot that flies every build before it ships</span></div></li>
+	</ul>
+</section>
+
+<section class="job sky" id="job">
+	<div class="section-head">
+		<p class="kicker">How it plays</p>
+		<h2>One shift, two to five minutes</h2>
+		<p class="section-lede">You start with 90 seconds on the clock and a parcel in the rack. Every delivery hands you the next one, and every delivery buys you more time.</p>
+	</div>
+
+	<ol class="postcards">
+		<li class="postcard">
+			<figure class="photo"><video data-inview muted loop playsinline preload="none" poster="media/depart.jpg" aria-label="The countdown at the Post Office, then the biplane sets off toward the first island."><source src="media/depart.mp4" type="video/mp4"></video><svg class="postmark" aria-hidden="true"><use href="#postmark"/></svg></figure>
+			<div class="note">
+				<p class="note-no">No. 1</p>
+				<h3>Read the tag</h3>
+				<p>Every shift starts at Post Office Peak. The tag at the bottom of the screen tells you where the parcel is going, how far it is, and what the tip is worth. The tip starts full and drains while you fly, so don't sightsee.</p>
+			</div>
+		</li>
+		<li class="postcard">
+			<figure class="photo"><video data-inview muted loop playsinline preload="none" poster="media/rings.jpg" aria-label="Boosting with speed lines through a line of blue boost rings."><source src="media/rings.mp4" type="video/mp4"></video><svg class="postmark" aria-hidden="true"><use href="#postmark"/></svg></figure>
+			<div class="note">
+				<p class="note-no">No. 2</p>
+				<h3>Ride the rings</h3>
+				<p>Hold <kbd>Shift</kbd> to boost: the field of view stretches, speed lines streak past and the engine note climbs. The blue rings strung along the busy routes top your boost back up.</p>
+			</div>
+		</li>
+		<li class="postcard">
+			<figure class="photo"><video data-inview muted loop playsinline preload="none" poster="media/deliver.jpg" aria-label="The biplane threads the delivery hoop at Mossy Mill: Express, confetti, and the parcel floats down on a parachute."><source src="media/deliver.mp4" type="video/mp4"></video><svg class="postmark" aria-hidden="true"><use href="#postmark"/></svg></figure>
+			<div class="note">
+				<p class="note-no">No. 3</p>
+				<h3>Thread the hoop</h3>
+				<p>Each island has a glowing hoop. Fly through it and the parcel goes over the side on a little parachute. Quick is <b>Express</b> (+15 s on the clock), then <b>On time</b> (+10 s), then <b>Late</b> (+5 s). Clean, quick deliveries build a combo up to x2.</p>
+			</div>
+		</li>
+		<li class="postcard">
+			<figure class="photo"><video data-inview muted loop playsinline preload="none" poster="media/stamp.jpg" aria-label="The biplane flies into a floating postage stamp, which pays out points and seconds."><source src="media/stamp.mp4" type="video/mp4"></video><svg class="postmark" aria-hidden="true"><use href="#postmark"/></svg></figure>
+			<div class="note">
+				<p class="note-no">No. 4</p>
+				<h3>Pocket the stamps</h3>
+				<p>Postage stamps spin in the air between the islands. Each one is worth 25 points and three more seconds, and comes back a while after you take it.</p>
+			</div>
+		</li>
+		<li class="postcard">
+			<figure class="photo"><video data-inview muted loop playsinline preload="none" poster="media/storm.jpg" aria-label="Flying straight into a thundercloud: a lightning zap, a jolt, and Parcel damaged."><source src="media/storm.mp4" type="video/mp4"></video><svg class="postmark" aria-hidden="true"><use href="#postmark"/></svg></figure>
+			<div class="note">
+				<p class="note-no">No. 5</p>
+				<h3>Mind the weather</h3>
+				<p>Thunderclouds drift across the routes and flash now and then. Fly into one and the lightning jolts you: the parcel is damaged, the tip takes a dent and your combo breaks. The same goes for clipping a cliff.</p>
+			</div>
+		</li>
+		<li class="postcard">
+			<figure class="photo"><video data-inview muted loop playsinline preload="none" poster="media/results.jpg" aria-label="The shift report: deliveries, stamps and the rank stamped in red."><source src="media/results.mp4" type="video/mp4"></video><svg class="postmark" aria-hidden="true"><use href="#postmark"/></svg></figure>
+			<div class="note">
+				<p class="note-no">No. 6</p>
+				<h3>Earn your rank</h3>
+				<p>When the clock runs out you get the shift report and a rank stamped in red: Trainee, Courier, Ace Courier, or Sky Postmaster. Then press <kbd>Space</kbd> and fly another.</p>
+			</div>
+		</li>
+	</ol>
+</section>
+
+<section class="watch" id="watch">
+	<div class="section-head light">
+		<p class="kicker">Watch a whole shift</p>
+		<h2>One shift, start to finish, with sound</h2>
+		<p class="section-lede">Flown by the game's own test pilot (the autopilot that plays every build) and recorded frame by frame by Godot's movie maker. Every note you hear was synthesized by the game's build scripts.</p>
+	</div>
+	<figure class="player">
+		<video id="shift" controls playsinline preload="none" poster="media/shift.jpg">
+			<source src="media/shift.mp4" type="video/mp4">
+		</video>
+	</figure>
+	<div class="timeline" id="timeline" role="group" aria-label="Moments in the shift: pick one to jump to it" hidden>
+		<div class="tl-track"><div class="tl-fill" id="tl-fill"></div></div>
+		<div class="tl-ticks" id="tl-ticks"></div>
+	</div>
+	<p class="now" id="now" aria-live="polite"></p>
+	<ul class="legend" id="legend" hidden>
+		<li><i class="dot k-delivery"></i>Delivery</li>
+		<li><i class="dot k-stamp"></i>Stamp</li>
+		<li><i class="dot k-ring"></i>Boost ring</li>
+		<li><i class="dot k-crash"></i>Bump or zap</li>
+	</ul>
+	<dl class="report" id="report" hidden></dl>
+</section>
+
+<section class="islands" id="islands">
+	<div class="section-head">
+		<p class="kicker">The islands</p>
+		<h2>Ten islands, each one a Python script</h2>
+		<p class="section-lede">Every island is one watertight shape, from the grass on top through a soil lip and bands of rock down to a dripping stalactite tip, dressed by a small kit of generators for trees, cottages, a windmill, a lighthouse and more. Hover or tap a postcard to fly in.</p>
+	</div>
+	<ul class="island-grid">
+		<li class="island" data-island="post-office"><figure><video muted loop playsinline preload="none" poster="media/island-post-office.jpg" aria-hidden="true"><source src="media/island-post-office.mp4" type="video/mp4"></video></figure><h3>Post Office Peak</h3><p>The hub: a brick post office with its flag and crates. Every shift starts here.</p></li>
+		<li class="island" data-island="mossy-mill"><figure><video muted loop playsinline preload="none" poster="media/island-mossy-mill.jpg" aria-hidden="true"><source src="media/island-mossy-mill.mp4" type="video/mp4"></video></figure><h3>Mossy Mill</h3><p>The windmill's sails turn over the crop rows while the gulls circle.</p></li>
+		<li class="island" data-island="beacon-point"><figure><video muted loop playsinline preload="none" poster="media/island-beacon-point.jpg" aria-hidden="true"><source src="media/island-beacon-point.mp4" type="video/mp4"></video></figure><h3>Beacon Point</h3><p>A striped lighthouse on a tall spire, its beam sweeping the clouds.</p></li>
+		<li class="island" data-island="kettle-hollow"><figure><video muted loop playsinline preload="none" poster="media/island-kettle-hollow.jpg" aria-hidden="true"><source src="media/island-kettle-hollow.mp4" type="video/mp4"></video></figure><h3>Kettle Hollow</h3><p>Cottages huddled round a well, smoke curling from the chimneys.</p></li>
+		<li class="island" data-island="orchard-rest"><figure><video muted loop playsinline preload="none" poster="media/island-orchard-rest.jpg" aria-hidden="true"><source src="media/island-orchard-rest.mp4" type="video/mp4"></video></figure><h3>Orchard Rest</h3><p>Rows of fruit trees and a cottage with a stepping-stone path.</p></li>
+		<li class="island" data-island="pinewhistle"><figure><video muted loop playsinline preload="none" poster="media/island-pinewhistle.jpg" aria-hidden="true"><source src="media/island-pinewhistle.mp4" type="video/mp4"></video></figure><h3>Pinewhistle</h3><p>Dense pines and a log cabin tucked in among them.</p></li>
+		<li class="island" data-island="cloudberry-farm"><figure><video muted loop playsinline preload="none" poster="media/island-cloudberry-farm.jpg" aria-hidden="true"><source src="media/island-cloudberry-farm.mp4" type="video/mp4"></video></figure><h3>Cloudberry Farm</h3><p>A red barn, a silo and a patch of pumpkins.</p></li>
+		<li class="island" data-island="bellfry"><figure><video muted loop playsinline preload="none" poster="media/island-bellfry.jpg" aria-hidden="true"><source src="media/island-bellfry.mp4" type="video/mp4"></video></figure><h3>Bellfry</h3><p>A little chapel with a bell tower, high on its rock.</p></li>
+		<li class="island" data-island="stargazers-perch"><figure><video muted loop playsinline preload="none" poster="media/island-stargazers-perch.jpg" aria-hidden="true"><source src="media/island-stargazers-perch.mp4" type="video/mp4"></video></figure><h3>Stargazer's Perch</h3><p>The highest island: an observatory dome and a slowly turning orrery.</p></li>
+		<li class="island" data-island="hollow-arch"><figure><video muted loop playsinline preload="none" poster="media/island-hollow-arch.jpg" aria-hidden="true"><source src="media/island-hollow-arch.mp4" type="video/mp4"></video></figure><h3>Hollow Arch</h3><p>A natural rock arch with the delivery hoop hung inside it. Fly through.</p></li>
+	</ul>
+</section>
+
+<section class="made paper-bg" id="made">
+	<div class="section-head">
+		<p class="kicker">Made by code</p>
+		<h2>No downloads. Everything is a script.</h2>
+		<p class="section-lede">Parcel Pilot was built by Claude Code (Claude Opus 5.5) from a one-paragraph brief: a small Godot game whose every model is a Blender script, built in milestones, with the game checked from the player's own camera after each one.</p>
+	</div>
+
+	<div class="made-grid">
+		<article class="card made-card">
+			<h3>Every model is a Blender script</h3>
+			<p>26 models and 99 thousand triangles, all built by Python run in Blender 5.1: the biplane, the ten islands, the hoop, the clouds, the balloon, the gulls, even the 3D logo at the top of this page. A shared palette means every color in the game is defined once.</p>
+			<img class="plane-art" src="media/plane.webp" alt="The red air-mail biplane, rendered by the game from its Blender-built model." width="900" height="511" loading="lazy">
+			<pre class="code" aria-label="An excerpt from blender/assets/plane.py"><code><span class="c"># The pilot (blender/assets/plane.py)</span>
+body.ico(<span class="n">0.22</span>, <span class="s">"skin"</span>,
+         loc=(<span class="n">0</span>, <span class="n">-0.66</span>, <span class="n">1.08</span>))
+body.sphere(<span class="n">0.235</span>, <span class="s">"leather"</span>,
+            loc=(<span class="n">0</span>, <span class="n">-0.68</span>, <span class="n">1.12</span>))
+<span class="c"># ...and his scarf, streaming back</span>
+body.torus(<span class="n">0.2</span>, <span class="n">0.06</span>, <span class="s">"cloth_red"</span>,
+           loc=(<span class="n">0</span>, <span class="n">-0.66</span>, <span class="n">0.88</span>))
+body.beam((<span class="n">0.05</span>, <span class="n">-0.8</span>, <span class="n">0.9</span>),
+          (<span class="n">0.28</span>, <span class="n">-1.75</span>, <span class="n">1.02</span>),
+          <span class="n">0.12</span>, <span class="s">"cloth_red"</span>)</code></pre>
+		</article>
+
+		<article class="card made-card">
+			<h3>Every sound is synthesized</h3>
+			<p>A small DSP toolkit in Python (oscillators, filters, convolution reverb, a plucked string, FM bells) renders all 19 effects and a 37 second music loop in D major. Loops are built from whole cycles, so they repeat without a click. Have a listen:</p>
+			<div class="soundboard" id="soundboard">
+				<button type="button" class="chip" data-sound="music">Music loop</button>
+				<button type="button" class="chip" data-sound="express">Express!</button>
+				<button type="button" class="chip" data-sound="deliver">Delivered</button>
+				<button type="button" class="chip" data-sound="stamp">Stamp</button>
+				<button type="button" class="chip" data-sound="ring">Boost ring</button>
+				<button type="button" class="chip" data-sound="boost">Boost</button>
+				<button type="button" class="chip" data-sound="parachute">Parachute</button>
+				<button type="button" class="chip" data-sound="thunder">Thunder</button>
+				<button type="button" class="chip" data-sound="new_best">New best</button>
+			</div>
+			<canvas class="scope" id="scope" width="640" height="120" aria-hidden="true"></canvas>
+		</article>
+
+		<article class="card made-card">
+			<h3>A bot plays every build</h3>
+			<p>No milestone counted as done until one command passed every step. Any error or warning in any log fails the whole gate.</p>
+			<ol class="gate">
+				<li><b>Assets</b> every model rebuilds within its triangle budget</li>
+				<li><b>Audio</b> no clipping, no DC offset, seamless loops</li>
+				<li><b>Import</b> Godot imports everything without a warning</li>
+				<li><b>Rules</b> 13 unit tests on tips, grades, combos and ranks</li>
+				<li><b>Input</b> real key presses drive the menus and the plane</li>
+				<li><b>Bot</b> the autopilot flies a whole shift and delivers</li>
+				<li><b>Camera</b> screenshots from the player's own camera, and the frame rate</li>
+			</ol>
+		</article>
+	</div>
+
+	<div class="compare" id="compare">
+		<div class="compare-head">
+			<h3>Greybox to finished</h3>
+			<p>The same moment at every milestone, captured automatically from the player's camera. Drag to compare with the greybox.</p>
+			<div class="tabs" role="tablist" aria-label="Milestone to compare with the greybox">
+				<button type="button" role="tab" data-m="2" aria-selected="false">M2 art pass</button>
+				<button type="button" role="tab" data-m="3" aria-selected="false">M3 juice</button>
+				<button type="button" role="tab" data-m="4" aria-selected="true">M4 finished</button>
+			</div>
+		</div>
+		<div class="slider" id="slider">
+			<img class="after" id="compare-after" src="media/m4.jpg" alt="The finished game: the biplane over the cloud sea, flying toward Orchard Rest." width="1280" height="720" loading="lazy">
+			<div class="before" id="compare-before"><img src="media/m1.jpg" alt="The M1 greybox of the same moment: white boxes and flat shapes." width="1280" height="720" loading="lazy"></div>
+			<div class="handle" id="compare-handle" aria-hidden="true"></div>
+			<span class="label left">M1 greybox</span>
+			<span class="label right" id="compare-label">M4 finished</span>
+			<input class="range" id="compare-range" type="range" min="0" max="100" value="50" aria-label="Slide between the greybox and the finished game">
+		</div>
+	</div>
+</section>
+
+<section class="controls" id="controls">
+	<div class="section-head">
+		<p class="kicker">Controls</p>
+		<h2>Keyboard or gamepad</h2>
+	</div>
+	<div class="control-grid">
+		<div class="control"><div class="keys"><kbd>W</kbd><kbd>S</kbd></div><p>Climb and dive <span>(or the arrow keys)</span></p></div>
+		<div class="control"><div class="keys"><kbd>A</kbd><kbd>D</kbd></div><p>Turn; the plane banks for you</p></div>
+		<div class="control"><div class="keys"><kbd class="wide">Shift</kbd></div><p>Boost <span>(or Space)</span></p></div>
+		<div class="control"><div class="keys"><kbd>Esc</kbd></div><p>Pause and settings <span>(or P)</span></p></div>
+	</div>
+	<p class="pad-note">On a gamepad: the left stick flies, <b>A</b> or the right trigger boosts, <b>Start</b> pauses.</p>
+</section>
+
+<section class="finale sky">
+	<img class="finale-plane" src="media/plane.webp" alt="" width="900" height="511" loading="lazy">
+	<h2>Your first parcel is waiting</h2>
+	<p>It runs in any recent desktop browser. No install, no account.</p>
+	<a class="btn btn-big" href="play/">Play Parcel Pilot</a>
+</section>
+</main>
+
+<footer class="footer">
+	<div class="airmail" aria-hidden="true"></div>
+	<div class="footer-inner">
+		<p><b>Parcel Pilot</b>, version 1.0. Made with Claude Code (Claude Opus 5.5), Godot 4.7, Blender 5.1 and Python.</p>
+		<p>Every model is a script and every sound is synthesized: no downloaded, purchased or AI-generated assets.</p>
+		<p class="footer-links"><a href="play/">Play</a><a href="#watch">Watch a shift</a><a href="#top">Back to the top</a></p>
+	</div>
+</footer>
+</body>
+</html>

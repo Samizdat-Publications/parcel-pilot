@@ -1,0 +1,73 @@
+{
+ "duration": 196.8,
+ "stats": {
+  "score": 982,
+  "deliveries": 8,
+  "stamps": 0,
+  "crashes": 1,
+  "rank": "Ace Courier",
+  "streak": 5
+ },
+ "events": [
+  {
+   "t": 8.57,
+   "kind": "go",
+   "label": ""
+  },
+  {
+   "t": 19.43,
+   "kind": "delivery",
+   "label": "Express|Orchard Rest|85"
+  },
+  {
+   "t": 31.7,
+   "kind": "delivery",
+   "label": "Express|Cloudberry Farm|101"
+  },
+  {
+   "t": 52.03,
+   "kind": "delivery",
+   "label": "On time|Hollow Arch|135"
+  },
+  {
+   "t": 64.1,
+   "kind": "ring",
+   "label": ""
+  },
+  {
+   "t": 71.37,
+   "kind": "delivery",
+   "label": "On time|Cloudberry Farm|158"
+  },
+  {
+   "t": 113.6,
+   "kind": "delivery",
+   "label": "On time|Stargazer's Perch|227"
+  },
+  {
+   "t": 115.83,
+   "kind": "crash",
+   "label": ""
+  },
+  {
+   "t": 143.13,
+   "kind": "delivery",
+   "label": "On time|Pinewhistle|78"
+  },
+  {
+   "t": 161.43,
+   "kind": "delivery",
+   "label": "On time|Post Office Peak|101"
+  },
+  {
+   "t": 175.87,
+   "kind": "delivery",
+   "label": "On time|Beacon Point|97"
+  },
+  {
+   "t": 188.6,
+   "kind": "results",
+   "label": "Ace Courier"
+  }
+ ]
+}
