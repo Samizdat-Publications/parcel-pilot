@@ -1,5 +1,7 @@
 # Parcel Pilot
 
+![Status: v1.0](https://img.shields.io/badge/status-v1.0-2ea043)
+
 **An arcade sky-courier game where everything is made by code.** Every 3D model is a
 Python script run in Blender, every sound and the music are synthesized in Python, and
 every build is verified by a bot that plays the game and photographs it from the
@@ -227,3 +229,7 @@ produced, and the commit history follows the milestones: M0 foundations, M1 grey
 loop, M2 art pass, M3 juice, M4 ship, M5 the web build and the public site.
 
 Built with Claude Code (Claude Opus 5.5).
+
+## Licence
+
+Code is MIT (see [LICENSE](LICENSE)). Third-party assets listed above keep their own licences.

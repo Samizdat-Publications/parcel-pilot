@@ -1,0 +1,27 @@
+{
+  "name": "Parcel Pilot",
+  "repo": "parcel-pilot",
+  "pitch": "Arcade sky-courier game where every model and sound is made by code, with no downloaded assets.",
+  "status": "v1",
+  "version": "1.0.0",
+  "kind": "game",
+  "started": "2026-09-24",
+  "updated": "2026-09-26",
+  "tech": [
+    "GDScript",
+    "Godot 4.7",
+    "Blender",
+    "Python"
+  ],
+  "links": {
+    "landing": "https://parcel-pilot-1ms.pages.dev",
+    "play": "https://parcel-pilot-1ms.pages.dev/play/",
+    "devlog": ""
+  },
+  "hero": {
+    "gif": "docs/media/gameplay.webp",
+    "poster": "site/media/hero.jpg",
+    "clip": "site/media/hero.mp4"
+  },
+  "credits": []
+}
